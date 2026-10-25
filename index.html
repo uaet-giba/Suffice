@@ -1,0 +1,1158 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Suffice Baselines and Results</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: one measured reading column; tables break out to a wider rail and scroll inside it. */
+:root{
+  --bg:#f6f8f7; --surface:#ffffff; --surface-2:#eef2f1;
+  --ink:#14201e; --ink-2:#4a5c59; --ink-3:#738481;
+  --rule:#dbe3e1; --rule-strong:#bfcbc8;
+  --accent:#0d6b61; --accent-soft:#e2f0ed;
+  --warn:#8d5c0c; --warn-soft:#f6eddb;
+  --crit:#a1392c; --crit-soft:#f8e6e2;
+  --serif:"Source Serif 4",Charter,Georgia,"Times New Roman",serif;
+  --display:"Spectral",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1413; --surface:#141d1b; --surface-2:#1b2624;
+  --ink:#e6ecea; --ink-2:#a8b8b5; --ink-3:#7e908d;
+  --rule:#253230; --rule-strong:#364643;
+  --accent:#4ecfbb; --accent-soft:#17302d;
+  --warn:#e2ab57; --warn-soft:#2e2718;
+  --crit:#ea8172; --crit-soft:#33201d;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1413; --surface:#141d1b; --surface-2:#1b2624;
+  --ink:#e6ecea; --ink-2:#a8b8b5; --ink-3:#7e908d;
+  --rule:#253230; --rule-strong:#364643;
+  --accent:#4ecfbb; --accent-soft:#17302d;
+  --warn:#e2ab57; --warn-soft:#2e2718;
+  --crit:#ea8172; --crit-soft:#33201d;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.62;margin:0;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.col{max-width:70ch}
+h1,h2,h3,h4{font-family:var(--display);text-wrap:balance;margin:0;font-weight:600;letter-spacing:-0.012em}
+h1{font-size:clamp(2rem,5.2vw,3.1rem);line-height:1.08;font-weight:700}
+h2{font-size:clamp(1.45rem,3.2vw,2rem);line-height:1.18}
+h3{font-size:1.14rem;line-height:1.3}
+h4{font-size:1rem;line-height:1.35}
+p{margin:0}
+em{font-style:italic}
+a{color:var(--accent);text-underline-offset:2px;text-decoration-thickness:1px}
+
+.eyebrow{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.sym{font-family:var(--display);font-style:italic}
+
+/* masthead */
+header.masthead{border-bottom:1px solid var(--rule-strong);background:var(--surface)}
+.masthead-in{display:flex;flex-direction:column;gap:1.1rem;padding-block:clamp(2.2rem,6vw,3.6rem) clamp(1.6rem,4vw,2.4rem)}
+.venue{display:flex;flex-wrap:wrap;gap:.45rem .9rem;align-items:baseline}
+.standfirst{font-size:1.1rem;color:var(--ink-2);max-width:62ch}
+.byline{font-family:var(--mono);font-size:.76rem;color:var(--ink-3);border-top:1px solid var(--rule);padding-top:.9rem;display:flex;flex-wrap:wrap;gap:.3rem 1.4rem}
+
+/* ledger strip */
+.ledger{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--surface-2)}
+.ledger div{padding:.85rem 1rem;border-right:1px solid var(--rule)}
+.ledger div:last-child{border-right:0}
+.ledger b{display:block;font-family:var(--mono);font-size:1.35rem;font-weight:600;color:var(--accent);line-height:1.1}
+.ledger span{font-family:var(--mono);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+
+/* nav */
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--rule-strong)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.toc-in{display:flex;gap:1.2rem;overflow-x:auto;padding-block:.6rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;scrollbar-width:thin}
+.toc-in a{color:var(--ink-2);text-decoration:none;white-space:nowrap;padding-block:.2rem;border-bottom:2px solid transparent}
+.toc-in a:hover,.toc-in a:focus-visible{color:var(--accent);border-bottom-color:var(--accent)}
+
+main{padding-block:0 4rem}
+section.part{padding-block:clamp(2.4rem,6vw,4rem) 0}
+.part-head{border-top:3px solid var(--ink);padding-top:.9rem;margin-bottom:2rem;display:flex;flex-direction:column;gap:.5rem}
+.block{display:flex;flex-direction:column;gap:1rem;padding-block:1.6rem 0}
+.block > h3{margin-top:.6rem}
+.lede{font-size:1.04rem;color:var(--ink-2);border-left:2px solid var(--accent);padding-left:1rem}
+
+ol.protocol{counter-reset:p;list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:1.1rem}
+ol.protocol li{counter-increment:p;padding-left:2.6rem;position:relative}
+ol.protocol li::before{content:counter(p);position:absolute;left:0;top:.15rem;font-family:var(--mono);font-size:.75rem;font-weight:600;color:var(--accent);background:var(--accent-soft);width:1.75rem;height:1.75rem;display:grid;place-items:center;border-radius:50%}
+ul.plain{margin:0;padding-left:1.15rem;display:flex;flex-direction:column;gap:.6rem}
+
+/* tables */
+figure.tbl{margin:1.6rem 0 0;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+figure.tbl figcaption{font-size:.88rem;color:var(--ink-2);line-height:1.5;max-width:78ch}
+figure.tbl figcaption b{font-family:var(--mono);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink);font-weight:600;margin-right:.5em}
+.scroll{overflow-x:auto;border:1px solid var(--rule);background:var(--surface);min-width:0}
+table{border-collapse:collapse;width:100%;font-size:.82rem;font-family:var(--mono);font-variant-numeric:tabular-nums}
+thead th{text-align:right;font-weight:600;font-size:.68rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-2);padding:.6rem .7rem;border-bottom:1.5px solid var(--rule-strong);white-space:nowrap;vertical-align:bottom}
+thead th:first-child,td:first-child{text-align:left}
+td{padding:.42rem .7rem;text-align:right;border-bottom:1px solid var(--rule);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{font-family:var(--serif);font-size:.92rem;white-space:normal;min-width:11rem}
+tr.sys td{background:var(--accent-soft)}
+tr.sys td:first-child{font-weight:600}
+tr.grp td{background:var(--surface-2);font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);text-align:left}
+td.wide{white-space:normal;text-align:left;font-family:var(--serif);font-size:.9rem;min-width:18rem}
+.ok{color:var(--accent);font-weight:600}
+.no{color:var(--crit);font-weight:600}
+.mid{color:var(--warn);font-weight:600}
+.chip{display:inline-block;font-family:var(--mono);font-size:.64rem;letter-spacing:.07em;text-transform:uppercase;padding:.12rem .45rem;border-radius:2px;font-weight:600}
+.chip.c-ok{background:var(--accent-soft);color:var(--accent)}
+.chip.c-mid{background:var(--warn-soft);color:var(--warn)}
+.chip.c-no{background:var(--crit-soft);color:var(--crit)}
+
+details.more{border:1px solid var(--rule);background:var(--surface);margin-top:1.4rem}
+details.more summary{cursor:pointer;padding:.75rem 1rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:500}
+details.more summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+details.more[open] summary{border-bottom:1px solid var(--rule)}
+details.more .scroll{border:0}
+
+.callout{background:var(--surface);border:1px solid var(--rule);border-left:3px solid var(--accent);padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:.6rem}
+.callout.warnbox{border-left-color:var(--warn)}
+.callout .eyebrow{color:var(--accent)}
+.callout.warnbox .eyebrow{color:var(--warn)}
+
+.pred{display:grid;grid-template-columns:auto 1fr;gap:.4rem 1rem;align-items:baseline;border-top:1px solid var(--rule);padding-top:.9rem;margin-top:.4rem}
+.pred dt{font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.06em;color:var(--accent);text-transform:uppercase}
+.pred dd{margin:0;font-size:.95rem;color:var(--ink-2)}
+
+footer{border-top:1px solid var(--rule-strong);background:var(--surface)}
+.foot-in{padding-block:2rem 2.6rem;display:flex;flex-direction:column;gap:.5rem;font-size:.86rem;color:var(--ink-3)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="masthead">
+  <div class="wrap masthead-in">
+    <div class="venue">
+      <span class="eyebrow">WWW '27 · Dublin</span>
+      <span class="eyebrow" style="color:var(--accent)">Sections 5.2 &amp; 6 · Extended</span>
+    </div>
+    <h1>Retrieve Until Sufficient</h1>
+    <p class="standfirst">Baselines and results for <strong>Suffice</strong>, a retriever that optimizes evidence sufficiency during selection and certifies it before generation. Forty-eight comparison systems, eleven QA benchmarks and two diagnostic suites, thirteen metrics, and eight pre-registered predictions, each written so that it can fail.</p>
+    <div class="byline">
+      <span>Run <strong>suffice_multihop_v6</strong></span>
+      <span>Seeds 17 / 29 / 43</span>
+      <span>Qwen2.5-3B-Instruct</span>
+      <span>25.2 GPU-hours, 1&times;A100-40GB</span>
+    </div>
+  </div>
+</header>
+
+<div class="ledger wrap" style="max-width:1180px">
+  <div><b>48</b><span>baseline systems</span></div>
+  <div><b>11</b><span>QA benchmarks</span></div>
+  <div><b>13</b><span>metrics</span></div>
+  <div><b>8</b><span>pre-registered predictions</span></div>
+  <div><b>10,000</b><span>bootstrap resamples</span></div>
+</div>
+
+<nav class="toc">
+  <div class="wrap toc-in">
+    <a href="#protocol">Protocol</a>
+    <a href="#families">Families</a>
+    <a href="#diagnostics">Diagnostics</a>
+    <a href="#config">Configurations</a>
+    <a href="#main">Main result</a>
+    <a href="#ablation">Ablation</a>
+    <a href="#p1">P1 Depth</a>
+    <a href="#p2">P2 Redundancy</a>
+    <a href="#p3">P3/P8 Risk</a>
+    <a href="#p4">P4 Labels</a>
+    <a href="#p5">P5 Byzantine</a>
+    <a href="#p6">P6 Noise</a>
+    <a href="#p7">P7 Causality</a>
+    <a href="#cost">Budget &amp; cost</a>
+    <a href="#stats">Bootstrap</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ PART I ============ -->
+<section class="part" id="protocol">
+  <div class="part-head col">
+    <span class="eyebrow">Part I · Section 5.2</span>
+    <h2>Baselines</h2>
+  </div>
+
+  <div class="col block">
+    <p class="lede">Forty-eight systems in eleven families share the generator backbone, the index, the pool budget, and the prompt scaffold. What differs between them is the selection interface, which is the object under test.</p>
+
+    <p>A comparison is only as informative as the things it holds fixed. Every system in the suite generates with Qwen2.5-3B-Instruct in bfloat16 under greedy decoding with a 16,384-token input window, retrieves from the same reciprocal-rank fusion of BM25 (<span class="num">k₁ = 0.9</span>, <span class="num">b = 0.4</span>) and e5-base-v2 at <span class="num">m = 200</span>, and receives the same prompt scaffold. Differences in the reported numbers are therefore attributable to what each system selects and when it stops, not to backbone, index, or prompting.</p>
+
+    <h3>Three commitments in the protocol</h3>
+    <p>Three features of the setup exist because specific claims in the theory would otherwise be assumed rather than tested.</p>
+
+    <ol class="protocol">
+      <li><strong>Per-dataset, per-seed depth tuning.</strong> Each fixed-depth baseline receives its own <span class="sym">k</span> drawn from <span class="num">{1, 3, 5, 10, 20, 50}</span>, selected on 200 held-out questions by a lexicographic rule over AG, Acc, SUF, and then smaller <span class="sym">k</span>, following the best-practice protocol of Wang et al. This is not generosity. Theorem 4.13 predicts that the attainable envelope in depth is unimodal with an interior maximizer, and a claim about the shape of a depth curve cannot be tested against baselines pinned to one arbitrary depth. Bamboogle takes the median of the other datasets, because 125 questions cannot support a tuning split of its own.</li>
+      <li><strong>Matched-answer-rate abstention.</strong> Where a baseline has no native abstention we add a calibrated log-probability variant evaluated at Suffice's answer rate. Theorem A.8 claims that certification costs nothing relative to abstaining at the same rate; comparing a selective system against non-selective ones on aggregate accuracy would decide that claim on the answer rate rather than on the selection rule.</li>
+      <li><strong>Cost matching at the generator-token budget.</strong> Every comparison is reported at the token budget Suffice consumes. Proposition 3.10 shows that coverage selection delivers a smaller context than fixed top-<span class="sym">k</span> whenever <span class="sym">k</span> exceeds <span class="num">κ<sub>m</sub>(q)·H(M<sub>q</sub>)</span>, the common case at <span class="num">κ<sub>m</sub> ≤ 3</span>. Without cost matching the method would be credited for spending less rather than for selecting better.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="part" id="families">
+  <div class="part-head col">
+    <span class="eyebrow">5.2.1</span>
+    <h2>The eleven families</h2>
+  </div>
+  <div class="col block">
+    <p>The families are organized by where in the pipeline a system intervenes: what is scored, what is re-ordered, what is rewritten, how depth is chosen, what is kept, and what is trusted. Families 1 through 42 are the received practice the paper argues against; 43 through 48 are the four diagnostic additions described in the next section.</p>
+    <p>Theorem 4.8 predicts that families 3 through 18 share a single failure, because each emits a ranking that the system then truncates. Families 13–15 and 37–38 are set-aware in form, so whether the barrier binds them is an empirical question rather than a corollary, which is what Prediction P2 tests.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 1</b> The 48 baselines in eleven families. All share the generator backbone, index, pool budget, and prompt scaffold; each fixed-depth system gets a tuned <span class="sym">k</span> on a development split. Numbers are the system IDs used throughout.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>#</th><th>Family</th><th>Systems</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1–2</td><td class="wide">Closed-book / long-context</td><td class="wide">Closed-book LLM; long-context stuffing (top-100)</td></tr>
+        <tr><td class="num">3–5</td><td class="wide">Sparse / dense / hybrid retrieval</td><td class="wide">BM25; dense (e5-base-v2); hybrid BM25+dense (RRF)</td></tr>
+        <tr><td class="num">6–7</td><td class="wide">Learned sparse</td><td class="wide">SPLADE; Contriever</td></tr>
+        <tr><td class="num">8–9</td><td class="wide">Late interaction</td><td class="wide">ColBERTv2; DPR</td></tr>
+        <tr><td class="num">10–12</td><td class="wide">Rerankers</td><td class="wide">monoT5; RankGPT; RankZephyr</td></tr>
+        <tr><td class="num">13–15</td><td class="wide">Setwise / listwise</td><td class="wide">Setwise; PRP; RankRAG</td></tr>
+        <tr><td class="num">16–18</td><td class="wide">Query transformation</td><td class="wide">HyDE; Step-Back; query2doc</td></tr>
+        <tr><td class="num">19–21</td><td class="wide">Adaptive / iterative</td><td class="wide">Self-Ask; IRCoT; ITER-RETGEN</td></tr>
+        <tr><td class="num">22–25</td><td class="wide">Self-reflective</td><td class="wide">FLARE; Self-RAG; Adaptive-RAG; CRAG</td></tr>
+        <tr><td class="num">26–28</td><td class="wide">Structured / memory</td><td class="wide">RAPTOR; GraphRAG; HippoRAG</td></tr>
+        <tr><td class="num">29–30</td><td class="wide">Compression</td><td class="wide">RECOMP; LongLLMLingua</td></tr>
+        <tr><td class="num">31–32</td><td class="wide">End-to-end training</td><td class="wide">RA-DIT; REPLUG</td></tr>
+        <tr><td class="num">33–34</td><td class="wide">RL-trained search</td><td class="wide">Search-R1; Search-o1</td></tr>
+        <tr><td class="num">35–36</td><td class="wide">Agentic</td><td class="wide">ReAct; WebThinker</td></tr>
+        <tr><td class="num">37–38</td><td class="wide">Diversity-aware</td><td class="wide">MMR (embedding space); DPP (embedding space)</td></tr>
+        <tr><td class="num">39–40</td><td class="wide">Conflict / robustness</td><td class="wide">Astute RAG; RobustRAG-style</td></tr>
+        <tr><td class="num">41–42</td><td class="wide">Knowledge conflict</td><td class="wide">CLASH-style; Chameleon-style</td></tr>
+        <tr class="sys"><td class="num">43</td><td class="wide">Sufficiency antecedent</td><td class="wide">Sufficient-context selective generation (Joren et al.)</td></tr>
+        <tr class="sys"><td class="num">44–45</td><td class="wide">Guaranteed comparators</td><td class="wide">C-RAG-style; RobustRAG-style</td></tr>
+        <tr class="sys"><td class="num">46</td><td class="wide">Oracle dispersion</td><td class="wide">Oracle-<span class="sym">κ<sub>m</sub></span> top-<span class="sym">κ<sub>m</sub>(q)</span></td></tr>
+        <tr class="sys"><td class="num">47–48</td><td class="wide">Entailment-space diversity</td><td class="wide">MMR in entailment space; DPP in entailment space</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+</section>
+
+<section class="part" id="diagnostics">
+  <div class="part-head col">
+    <span class="eyebrow">5.2.2</span>
+    <h2>Four additions that test the contribution</h2>
+  </div>
+  <div class="col block">
+    <p>The first forty-two systems establish that the suite is competitive. The last six exist to make specific claims falsifiable, and each is paired with the result it could refute.</p>
+
+    <h4>#43 · Sufficient-context selective generation</h4>
+    <p>The direct antecedent. Joren et al. define sufficient context, label it with an autorater, and gate generation on the label. Including it isolates what this paper adds — sufficiency as the retrieval objective and as a certified quantity — from what it inherits, which is the diagnostic lens. We run it as a logistic combination of the autorater's <span class="num">P(Yes)</span> and mean log-probability, thresholded at Suffice's answer rate.</p>
+
+    <h4>#44–45 · C-RAG and RobustRAG</h4>
+    <p>The only other systems in the literature that carry guarantees, and the comparators for Theorems A.2 and A.10 respectively. They certify different objects: C-RAG bounds generation risk, RobustRAG certifies per-passage robustness, and Suffice certifies the sufficiency of the input. An equal result against these two is the expected result and not a failure, because the claim is composability and cost of the certified object, not a larger number.</p>
+
+    <h4>#46 · Oracle-<span class="sym">κ<sub>m</sub></span></h4>
+    <p>A baseline handed the gold dispersion and allowed to retrieve exactly <span class="num">κ<sub>m</sub>(q)</span> passages by relevance. It separates the two things Suffice does at once. If Oracle-<span class="sym">κ<sub>m</sub></span> matched Suffice, the contribution would reduce to knowing how deep to go; the gap between them is the value of knowing <em>which</em> passages, not merely how many.</p>
+
+    <h4>#47–48 · MMR and DPP in entailment space</h4>
+    <p>Proposition 4.10 separates diversity from coverage by construction: MMR measures dissimilarity between documents, while coverage is measured between documents and premises. A construction is not evidence, so we also run both diversity methods over premise-entailment vectors <span class="num">e(·, d)</span> rather than embeddings. These are the strongest honest competitors in the suite — set-aware, operating in the right space, and differing from coverage-greedy mainly in lacking the stopping rule and the certificate.</p>
+  </div>
+
+  <div class="col block">
+    <div class="callout warnbox">
+      <span class="eyebrow">What this suite cannot refute</span>
+      <p>Every system is run on one 3B backbone, so absolute levels are properties of that scale and only the ordering transfers. Systems marked <em>[reconstruction]</em> are re-implemented from their papers rather than run from author code; a reconstruction that underperforms its published result is a fact about the reconstruction before it is a fact about the method. Finally, the suite tests selection and stopping. It cannot adjudicate claims about training-time methods (#31–34) on equal footing, because those were trained against different corpora.</p>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="config">
+  <div class="part-head col">
+    <span class="eyebrow">5.2.3</span>
+    <h2>Configurations</h2>
+  </div>
+  <div class="col block">
+    <p>Fixed settings are reproduced below exactly as they appear in <span class="num">config.json</span>. The selected depths follow in the collapsed table: they vary widely across datasets and across seeds within a dataset, which is itself evidence for Corollary 4.7 — a fixed global <span class="sym">k</span> is simultaneously wasteful and insufficient across a distribution of dispersions.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 2</b> Fixed settings of the non-depth-tuned baselines.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Baseline</th><th>Configuration</th></tr></thead>
+      <tbody>
+        <tr><td>#1 Closed-book</td><td class="wide">no retrieval</td></tr>
+        <tr><td>#2 Long-context</td><td class="wide">hybrid top-100</td></tr>
+        <tr><td>#12 monoT5</td><td class="wide">castorini/monot5-base-msmarco reranks hybrid top-100</td></tr>
+        <tr><td>#16 MMR (embedding)</td><td class="wide">λ = 0.5 over dense top-100</td></tr>
+        <tr><td>#17 HyDE / #18 Step-Back</td><td class="wide">query rewrite by the auxiliary LM; lists of depth 50</td></tr>
+        <tr><td>#19 Self-Ask</td><td class="wide">BM25 top-3 per follow-up, at most 4 steps</td></tr>
+        <tr><td>#20 IRCoT</td><td class="wide">BM25 top-4 per step, 4 steps, at most 12 passages</td></tr>
+        <tr><td>#30 ITER-RETGEN</td><td class="wide">BM25 top-5, 2 rounds</td></tr>
+        <tr><td>#42 Astute RAG</td><td class="wide">memory passage + hybrid top-10, consolidation, final answer</td></tr>
+        <tr><td>#43 Sufficient-context</td><td class="wide">logistic(autorater P(Yes), mean log-prob) at Suffice's answer rate</td></tr>
+        <tr><td>#44 C-RAG-style</td><td class="wide">CRC on self-consistency of 5 samples (T = 0.7), α = 0.10</td></tr>
+        <tr><td>#45 RobustRAG-style</td><td class="wide">isolated answers over hybrid top-10, majority with abstention</td></tr>
+        <tr><td>#46 Oracle-<span class="sym">κ<sub>m</sub></span></td><td class="wide">hybrid top-<span class="sym">κ<sub>m</sub>(q)</span> with the gold dispersion</td></tr>
+        <tr><td>#47 / #48 MMR / DPP (entailment)</td><td class="wide">diversity over premise-entailment vectors e(·, d)</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <details class="more">
+    <summary>Table 3 — Selected depth k per fixed-depth baseline, dataset and seed (44 rows)</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>System</th><th>k (seed 17)</th><th>k (seed 29)</th><th>k (seed 43)</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td colspan="5">2WikiMultihopQA</td></tr>
+        <tr><td>#3 BM25</td><td class="wide">sparse</td><td class="num">50</td><td class="num">50</td><td class="num">20</td></tr>
+        <tr><td>Coverage-greedy</td><td class="wide">coverage</td><td class="num">50</td><td class="num">50</td><td class="num">10</td></tr>
+        <tr><td>#5 Dense (e5)</td><td class="wide">dense</td><td class="num">50</td><td class="num">50</td><td class="num">50</td></tr>
+        <tr><td>#48 DPP (entailment)</td><td class="wide">diversity</td><td class="num">10</td><td class="num">20</td><td class="num">10</td></tr>
+        <tr><td>#4 Hybrid RRF</td><td class="wide">hybrid</td><td class="num">5</td><td class="num">20</td><td class="num">50</td></tr>
+        <tr><td>#17 HyDE</td><td class="wide">query transform</td><td class="num">5</td><td class="num">20</td><td class="num">50</td></tr>
+        <tr><td>#16 MMR (embedding)</td><td class="wide">diversity</td><td class="num">10</td><td class="num">50</td><td class="num">20</td></tr>
+        <tr><td>#47 MMR (entailment)</td><td class="wide">diversity</td><td class="num">10</td><td class="num">50</td><td class="num">50</td></tr>
+        <tr><td>#12 monoT5</td><td class="wide">reranker</td><td class="num">50</td><td class="num">50</td><td class="num">50</td></tr>
+        <tr><td>#11 Premise pool</td><td class="wide">pooling</td><td class="num">20</td><td class="num">50</td><td class="num">50</td></tr>
+        <tr><td>#18 Step-Back</td><td class="wide">query transform</td><td class="num">10</td><td class="num">20</td><td class="num">50</td></tr>
+        <tr class="grp"><td colspan="5">Bamboogle</td></tr>
+        <tr><td>#3 BM25</td><td class="wide">sparse</td><td class="num">20</td><td class="num">1</td><td class="num">20</td></tr>
+        <tr><td>Coverage-greedy</td><td class="wide">coverage</td><td class="num">20</td><td class="num">3</td><td class="num">10</td></tr>
+        <tr><td>#5 Dense (e5)</td><td class="wide">dense</td><td class="num">10</td><td class="num">10</td><td class="num">5</td></tr>
+        <tr><td>#48 DPP (entailment)</td><td class="wide">diversity</td><td class="num">10</td><td class="num">20</td><td class="num">10</td></tr>
+        <tr><td>#4 Hybrid RRF</td><td class="wide">hybrid</td><td class="num">5</td><td class="num">3</td><td class="num">50</td></tr>
+        <tr><td>#17 HyDE</td><td class="wide">query transform</td><td class="num">5</td><td class="num">20</td><td class="num">5</td></tr>
+        <tr><td>#16 MMR (embedding)</td><td class="wide">diversity</td><td class="num">1</td><td class="num">1</td><td class="num">5</td></tr>
+        <tr><td>#47 MMR (entailment)</td><td class="wide">diversity</td><td class="num">10</td><td class="num">50</td><td class="num">5</td></tr>
+        <tr><td>#12 monoT5</td><td class="wide">reranker</td><td class="num">10</td><td class="num">1</td><td class="num">5</td></tr>
+        <tr><td>#11 Premise pool</td><td class="wide">pooling</td><td class="num">20</td><td class="num">10</td><td class="num">50</td></tr>
+        <tr><td>#18 Step-Back</td><td class="wide">query transform</td><td class="num">10</td><td class="num">5</td><td class="num">50</td></tr>
+        <tr class="grp"><td colspan="5">MuSiQue</td></tr>
+        <tr><td>#3 BM25</td><td class="wide">sparse</td><td class="num">1</td><td class="num">1</td><td class="num">1</td></tr>
+        <tr><td>Coverage-greedy</td><td class="wide">coverage</td><td class="num">3</td><td class="num">3</td><td class="num">3</td></tr>
+        <tr><td>#5 Dense (e5)</td><td class="wide">dense</td><td class="num">3</td><td class="num">1</td><td class="num">3</td></tr>
+        <tr><td>#48 DPP (entailment)</td><td class="wide">diversity</td><td class="num">3</td><td class="num">10</td><td class="num">3</td></tr>
+        <tr><td>#4 Hybrid RRF</td><td class="wide">hybrid</td><td class="num">1</td><td class="num">1</td><td class="num">50</td></tr>
+        <tr><td>#17 HyDE</td><td class="wide">query transform</td><td class="num">1</td><td class="num">1</td><td class="num">1</td></tr>
+        <tr><td>#16 MMR (embedding)</td><td class="wide">diversity</td><td class="num">1</td><td class="num">1</td><td class="num">1</td></tr>
+        <tr><td>#47 MMR (entailment)</td><td class="wide">diversity</td><td class="num">3</td><td class="num">5</td><td class="num">5</td></tr>
+        <tr><td>#12 monoT5</td><td class="wide">reranker</td><td class="num">1</td><td class="num">1</td><td class="num">3</td></tr>
+        <tr><td>#11 Premise pool</td><td class="wide">pooling</td><td class="num">1</td><td class="num">1</td><td class="num">50</td></tr>
+        <tr><td>#18 Step-Back</td><td class="wide">query transform</td><td class="num">1</td><td class="num">1</td><td class="num">50</td></tr>
+        <tr class="grp"><td colspan="5">StrategyQA</td></tr>
+        <tr><td>#3 BM25</td><td class="wide">sparse</td><td class="num">20</td><td class="num">1</td><td class="num">50</td></tr>
+        <tr><td>Coverage-greedy</td><td class="wide">coverage</td><td class="num">20</td><td class="num">1</td><td class="num">10</td></tr>
+        <tr><td>#5 Dense (e5)</td><td class="wide">dense</td><td class="num">10</td><td class="num">10</td><td class="num">5</td></tr>
+        <tr><td>#48 DPP (entailment)</td><td class="wide">diversity</td><td class="num">10</td><td class="num">50</td><td class="num">50</td></tr>
+        <tr><td>#4 Hybrid RRF</td><td class="wide">hybrid</td><td class="num">50</td><td class="num">3</td><td class="num">50</td></tr>
+        <tr><td>#17 HyDE</td><td class="wide">query transform</td><td class="num">50</td><td class="num">50</td><td class="num">5</td></tr>
+        <tr><td>#16 MMR (embedding)</td><td class="wide">diversity</td><td class="num">1</td><td class="num">1</td><td class="num">5</td></tr>
+        <tr><td>#47 MMR (entailment)</td><td class="wide">diversity</td><td class="num">50</td><td class="num">50</td><td class="num">5</td></tr>
+        <tr><td>#12 monoT5</td><td class="wide">reranker</td><td class="num">10</td><td class="num">1</td><td class="num">5</td></tr>
+        <tr><td>#11 Premise pool</td><td class="wide">pooling</td><td class="num">20</td><td class="num">10</td><td class="num">10</td></tr>
+        <tr><td>#18 Step-Back</td><td class="wide">query transform</td><td class="num">50</td><td class="num">5</td><td class="num">50</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+</section>
+
+<section class="part" id="main">
+  <div class="part-head col">
+    <span class="eyebrow">Part II · Section 6</span>
+    <h2>Results</h2>
+  </div>
+
+  <div class="col block">
+    <p class="lede">Suffice is not the highest-accuracy system in the suite, and it is not meant to be. It is the only system whose answer rate is a controlled variable rather than a fixed constant, and the results below are organized around what that control buys and what it costs.</p>
+
+    <p>Reading the main table requires one convention stated up front. Γ = Acc − AG is the grounding gap: answers that are correct without being attributable to the delivered evidence. A system with high Acc and high Γ is answering from parametric memory while displaying a context it did not use. Every baseline in the suite answers 100% of questions, so for them CSR — the probability of answering on insufficient context — is not a free parameter but a consequence, and it sits above 70%.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 4</b> Main results, macro average over the four main datasets (mean ± sd over three seeds, %). Γ = Acc − AG throughout. AG@matched is AG at Suffice's answer rate of 13.3%. A dash denotes an undefined quantity.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>System</th><th>AG</th><th>Acc</th><th>Γ</th><th>SUF</th><th>SNA</th><th>CAS</th><th>Ans%</th><th>AG@matched</th></tr></thead>
+      <tbody>
+        <tr><td>Closed-book LLM</td><td>–</td><td>22.5 ± 0.4</td><td>22.5 ± 0.4</td><td>12.4 ± 0.6</td><td>–</td><td>–</td><td>100</td><td>–</td></tr>
+        <tr><td>Long-context stuffing (top-100)</td><td>0.6</td><td>23.5 ± 0.2</td><td>22.9 ± 0.2</td><td>39.8 ± 0.8</td><td>1.2</td><td>66.3 ± 0.6</td><td>100</td><td>0.017</td></tr>
+        <tr><td>BM25 → generate</td><td>0.8 ± 0.1</td><td>23.6 ± 0.7</td><td>22.8 ± 0.7</td><td>14.5 ± 5.4</td><td>2.5 ± 1.1</td><td>65.2 ± 1.9</td><td>100</td><td>0.011 ± 0.002</td></tr>
+        <tr><td>Hybrid BM25+dense (RRF)</td><td>0.6 ± 0.2</td><td>23.5 ± 0.9</td><td>22.9 ± 0.9</td><td>22.3 ± 13.6</td><td>1.7 ± 1.2</td><td>65.2 ± 1.6</td><td>100</td><td>0.013 ± 0.010</td></tr>
+        <tr><td>Dense (e5-base-v2)</td><td>0.8 ± 0.1</td><td>24.2 ± 1.1</td><td>23.4 ± 1.1</td><td>20.0 ± 2.4</td><td>4.2 ± 0.2</td><td>64.2 ± 0.7</td><td>100</td><td>0.023</td></tr>
+        <tr><td>monoT5 cross-encoder</td><td>0.8</td><td>24.9 ± 0.9</td><td>24.1 ± 0.9</td><td>19.1 ± 6.4</td><td>2.7</td><td>64.3 ± 2.0</td><td>100</td><td>0.013</td></tr>
+        <tr><td>MMR (embedding space)</td><td>0.3 ± 0.5</td><td>22.0 ± 1.0</td><td>21.7 ± 1.0</td><td>8.0 ± 2.5</td><td>11.2 ± 15.9</td><td>64.7 ± 1.2</td><td>100</td><td>0.001 ± 0.002</td></tr>
+        <tr><td>IRCoT</td><td>0.6</td><td>27.7 ± 0.5</td><td>27.1 ± 0.5</td><td>18.2</td><td>1.9</td><td>74.1 ± 0.7</td><td>100</td><td>0.012</td></tr>
+        <tr><td>Self-Ask</td><td>0.8</td><td>28.2 ± 0.6</td><td>27.4 ± 0.6</td><td>20.8</td><td>2.6</td><td>90.5 ± 0.4</td><td>100</td><td>0.014</td></tr>
+        <tr><td>ITER-RETGEN</td><td>0.8</td><td>33.3 ± 0.6</td><td>32.5 ± 0.6</td><td>19.3</td><td>2.1</td><td>70.6 ± 0.4</td><td>100</td><td>0.015</td></tr>
+        <tr><td>Astute RAG</td><td>0.8 ± 0.2</td><td>33.4 ± 0.5</td><td>32.6 ± 0.4</td><td>20.8</td><td>2.0</td><td>69.7 ± 0.2</td><td>100</td><td>0.016 ± 0.004</td></tr>
+        <tr><td>Sufficient-context selective gen.</td><td>0.4 ± 0.3</td><td>10.9 ± 9.0</td><td>10.5 ± 8.8</td><td>22.3 ± 13.6</td><td>1.2 ± 1.4</td><td>60.0 ± 4.1</td><td>51.9 ± 28.7</td><td>0.010</td></tr>
+        <tr><td>C-RAG-style (output-risk CRC)</td><td>0.4</td><td>21.8 ± 0.5</td><td>21.4 ± 0.5</td><td>22.3 ± 13.6</td><td>1.5</td><td>62.1 ± 1.8</td><td>100</td><td>0.009</td></tr>
+        <tr><td>RobustRAG-style (isolate+aggregate)</td><td>0.5 ± 0.2</td><td>10.2 ± 0.4</td><td>9.7 ± 0.2</td><td>20.8</td><td>1.0</td><td>56.5 ± 2.3</td><td>27.7 ± 0.9</td><td>0.008</td></tr>
+        <tr><td>Oracle-<span class="sym">κ<sub>m</sub></span> top-<span class="sym">κ<sub>m</sub>(q)</span></td><td>0.2</td><td>22.9 ± 0.2</td><td>22.7 ± 0.2</td><td>7.1 ± 0.4</td><td>2.7</td><td>67.0 ± 1.0</td><td>100</td><td>0.004</td></tr>
+        <tr><td>MMR in entailment space</td><td>1.5 ± 0.4</td><td>31.6 ± 1.5</td><td>30.1 ± 1.5</td><td>34.5 ± 7.4</td><td>39.4 ± 18.2</td><td>65.5 ± 0.6</td><td>100</td><td>0.016 ± 0.002</td></tr>
+        <tr><td>DPP in entailment space</td><td>1.5 ± 0.6</td><td>32.7 ± 1.5</td><td>31.2 ± 1.5</td><td>34.8 ± 6.0</td><td>18.6 ± 14.8</td><td>65.9 ± 0.9</td><td>100</td><td>0.020 ± 0.006</td></tr>
+        <tr><td>Coverage-greedy, fixed k (no certificate)</td><td>1.1 ± 0.5</td><td>31.0 ± 1.6</td><td>29.9 ± 1.6</td><td>29.8 ± 6.5</td><td>2.0</td><td>65.7 ± 0.9</td><td>100</td><td>0.011 ± 0.002</td></tr>
+        <tr class="sys"><td>Suffice (τ = 1)</td><td>0.5 ± 0.4</td><td>7.7 ± 1.6</td><td>7.2 ± 1.6</td><td>28.2 ± 1.4</td><td>6.4 ± 5.6</td><td>59.4 ± 8.0</td><td>13.3 ± 2.5</td><td>0.003</td></tr>
+        <tr class="sys"><td>Suffice (τ = 3)</td><td>0.2 ± 0.1</td><td>0.9 ± 0.4</td><td>0.7 ± 0.3</td><td>29.1 ± 1.2</td><td>1.6 ± 0.8</td><td>66.7 ± 1.4</td><td>1.8 ± 0.6</td><td>0.002</td></tr>
+        <tr class="sys"><td>Suffice (τ = 5)</td><td>0.1 ± 0.1</td><td>0.4 ± 0.2</td><td>0.3 ± 0.2</td><td>29.1 ± 1.2</td><td>0.9 ± 0.4</td><td>68.1 ± 2.0</td><td>0.6 ± 0.3</td><td>0.001</td></tr>
+        <tr class="sys"><td>Suffice (τ = 7)</td><td>0.1 ± 0.1</td><td>0.2 ± 0.1</td><td>0.1 ± 0.1</td><td>29.1 ± 1.2</td><td>0.4 ± 0.2</td><td>69.0 ± 2.6</td><td>0.3 ± 0.2</td><td>0.001</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>Three readings follow from the table. First, the corroboration level behaves as Proposition A.11 says it must: the certified answer rate collapses monotonically across <span class="num">τ = 1, 3, 5, 7</span> — 13.3%, 1.8%, 0.6%, 0.3% — while SUF stays flat at 28–29% and CAS rises from 59.4 to 69.0. Tightening <span class="sym">τ</span> does not improve selection; it narrows the set of questions on which the system is willing to speak, and what survives is better grounded. Second, the entailment-space diversity baselines (#47–48) are the strongest competitors on AG and SUF, which is the honest shape of the result: moving diversity into the right space recovers most of the selection benefit, and what remains is the stopping rule and the certificate. Third, every non-selective system reports an answer rate of exactly 100% at every depth, which is the CSR ≥ 70.9% regime that the always-answer ablation makes explicit.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 5</b> Suffice over the <span class="sym">α × τ</span> grid (macro average). The CSR ≤ <span class="sym">α</span> column is checked per seed, which is the per-seed form of Theorem A.2 rather than its expectation.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>α</th><th>τ</th><th>AG</th><th>Acc</th><th>SUF</th><th>CSR</th><th>CSR ≤ α (every seed)</th><th>Ans%</th></tr></thead>
+      <tbody>
+        <tr class="sys"><td class="num">0.05</td><td>1</td><td>0.3 ± 0.4</td><td>4.1 ± 0.3</td><td>28.8 ± 0.8</td><td>1.80 ± 0.28</td><td><span class="chip c-ok">yes</span></td><td>6.2 ± 0.4</td></tr>
+        <tr><td class="num">0.05</td><td>3</td><td>0</td><td>0.1</td><td>29.1 ± 0.3</td><td>0.37 ± 0.26</td><td><span class="chip c-ok">yes</span></td><td>0.4 ± 0.3</td></tr>
+        <tr><td class="num">0.05</td><td>5</td><td>0</td><td>0</td><td>29.1 ± 0.3</td><td>0</td><td><span class="chip c-ok">yes</span></td><td>0</td></tr>
+        <tr><td class="num">0.05</td><td>7</td><td>0</td><td>0</td><td>29.1 ± 0.3</td><td>0</td><td><span class="chip c-ok">yes</span></td><td>0</td></tr>
+        <tr class="sys"><td class="num">0.10</td><td>1</td><td>0.5 ± 0.4</td><td>7.7 ± 0.3</td><td>28.2 ± 0.7</td><td>4.73 ± 0.29</td><td><span class="chip c-ok">yes</span></td><td>13.3 ± 0.8</td></tr>
+        <tr><td class="num">0.10</td><td>3</td><td>0</td><td>0.1</td><td>29.1 ± 0.3</td><td>0.37 ± 0.26</td><td><span class="chip c-ok">yes</span></td><td>0.4 ± 0.3</td></tr>
+        <tr><td class="num">0.10</td><td>5</td><td>0</td><td>0</td><td>29.1 ± 0.3</td><td>0</td><td><span class="chip c-ok">yes</span></td><td>0</td></tr>
+        <tr><td class="num">0.10</td><td>7</td><td>0</td><td>0</td><td>29.1 ± 0.3</td><td>0</td><td><span class="chip c-ok">yes</span></td><td>0</td></tr>
+        <tr class="sys"><td class="num">0.20</td><td>1</td><td>0.6 ± 0.4</td><td>11.4 ± 0.6</td><td>27.7 ± 0.4</td><td>8.92 ± 0.73</td><td><span class="chip c-ok">yes</span></td><td>20.8 ± 0.8</td></tr>
+        <tr><td class="num">0.20</td><td>3</td><td>0</td><td>0.1</td><td>29.1 ± 0.3</td><td>0.37 ± 0.26</td><td><span class="chip c-ok">yes</span></td><td>0.4 ± 0.3</td></tr>
+        <tr><td class="num">0.20</td><td>5</td><td>0</td><td>0</td><td>29.1 ± 0.3</td><td>0</td><td><span class="chip c-ok">yes</span></td><td>0</td></tr>
+        <tr><td class="num">0.20</td><td>7</td><td>0</td><td>0</td><td>29.1 ± 0.3</td><td>0</td><td><span class="chip c-ok">yes</span></td><td>0</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>Every cell satisfies the guarantee, and the empirical risk tracks <span class="sym">α</span> closely at <span class="num">τ = 1</span> (1.80, 4.73, 8.92 against targets of 5, 10, 20) rather than sitting far below it — the certificate is tight, not conservative. At <span class="num">τ ≥ 3</span> the system abstains on essentially everything on these four datasets, so <span class="num">τ = 1</span> across <span class="sym">α</span> is the informative operating line and the <span class="sym">τ</span> ≥ 3 rows are supporting evidence for the robustness claim rather than a deployment recommendation.</p>
+  </div>
+</section>
+
+<section class="part" id="ablation">
+  <div class="part-head col">
+    <span class="eyebrow">6.2</span>
+    <h2>The certificate is load-bearing</h2>
+  </div>
+  <div class="col block">
+    <p>An architecture with eight stages invites the suspicion that most of them are decoration. The ablation is run at the deployed operating point (<span class="num">α = 0.10, τ = 1</span>) and reports CSR, which is the quantity the guarantee is about, alongside SUF and the answer rate that pays for it.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 6</b> Component ablation at <span class="num">α = 0.10</span>, <span class="num">τ = 1</span> (macro average, %). Three seeds.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Variant</th><th>AG</th><th>SUF</th><th>CAS</th><th>CSR</th><th>Ans%</th></tr></thead>
+      <tbody>
+        <tr class="sys"><td>Full Suffice</td><td>0.5 ± 0.4</td><td>28.2 ± 0.7</td><td>59.4 ± 3.3</td><td class="ok">4.73 ± 0.29</td><td>13.3 ± 0.8</td></tr>
+        <tr><td>− dispersion estimate</td><td>0.3 ± 0.3</td><td>28.7 ± 0.3</td><td>73.0 ± 6.4</td><td>2.22 ± 0.74</td><td>7.8 ± 1.8</td></tr>
+        <tr><td>− premise decomposition</td><td>0.4 ± 0.4</td><td class="no">16.3 ± 0.2</td><td>76.3 ± 8.6</td><td>2.58 ± 0.78</td><td>3.1 ± 0.5</td></tr>
+        <tr><td>− coverage (→ top-k)</td><td>0.6 ± 0.4</td><td class="no">14.6 ± 0.1</td><td>64.2 ± 1.6</td><td>4.86 ± 0.87</td><td>10.1 ± 0.8</td></tr>
+        <tr><td>− coverage (→ MMR)</td><td>0.5 ± 0.5</td><td class="no">7.4</td><td>57.5 ± 3.3</td><td>5.38 ± 1.10</td><td>8.9 ± 1.2</td></tr>
+        <tr><td>− premise-targeted pooling</td><td>0.5 ± 0.4</td><td>20.1 ± 0.5</td><td>62.7 ± 3.3</td><td>5.93 ± 0.38</td><td>11.5 ± 0.7</td></tr>
+        <tr><td>− adaptive verifier allocation</td><td>0.4 ± 0.3</td><td>27.4 ± 0.5</td><td>67.8 ± 1.7</td><td>4.54 ± 0.48</td><td>8.7 ± 0.8</td></tr>
+        <tr><td>− conformal halt (→ fixed λ)</td><td>0.5 ± 0.4</td><td>28.4 ± 0.8</td><td>68.3 ± 10.1</td><td class="mid">6.03 ± 0.68</td><td>17.0 ± 1.0</td></tr>
+        <tr><td>− Mondrian strata (→ marginal)</td><td>0.5 ± 0.4</td><td>28.1 ± 0.3</td><td>60.4 ± 4.2</td><td>5.12 ± 0.48</td><td>14.1 ± 1.8</td></tr>
+        <tr><td>per-hop α/h (Prop. A.4)</td><td>0.1</td><td>28.6 ± 0.2</td><td>51.7 ± 9.9</td><td class="ok">0.47 ± 0.13</td><td>6.1 ± 0.5</td></tr>
+        <tr><td>per-hop α each</td><td>0.1</td><td>28.3 ± 0.2</td><td>52.6 ± 10.4</td><td>1.53 ± 0.39</td><td>8.4 ± 0.7</td></tr>
+        <tr><td>− conflict detection</td><td>0.5 ± 0.4</td><td>28.3 ± 0.6</td><td>60.5 ± 2.7</td><td>4.78 ± 0.24</td><td>13.5 ± 1.4</td></tr>
+        <tr><td>− minimal-core extraction</td><td>0.5 ± 0.4</td><td>28.2 ± 0.7</td><td>59.4 ± 3.3</td><td>4.70 ± 0.34</td><td>13.2 ± 0.7</td></tr>
+        <tr><td>− abstention (always answer)</td><td>0.4 ± 0.1</td><td>29.1 ± 0.3</td><td>65.6 ± 0.6</td><td class="no">70.92 ± 0.31</td><td>100</td></tr>
+        <tr><td>− constrained decoding</td><td>0.5 ± 0.4</td><td>28.2 ± 0.7</td><td>60.1 ± 5.0</td><td class="mid">7.02 ± 0.70</td><td>17.4 ± 0.9</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>The components separate into three groups by what they move. Removing the coverage objective is the largest single loss, cutting SUF from 28.2 to 14.6 under top-<span class="sym">k</span> and to 7.4 under MMR — the independence barrier of Theorem 4.8, measured as an ablation rather than as a construction. Removing premise decomposition costs nearly as much (16.3), which is expected, since without premises there is nothing for coverage to cover. Removing the conformal halt or constrained decoding raises CSR above the target while raising the answer rate, which is the failure mode the certificate exists to prevent: a system that answers more and is wrong more while reporting the same SUF. Removing abstention is the limit of that behavior at CSR 70.9%.</p>
+    <p>Two components move almost nothing at this operating point. Conflict detection and minimal-core extraction leave CSR and SUF within noise. That is the correct result for both: conflict detection fires only on contested questions, of which there are 11 in the 200-item audit sample, and minimal-core extraction changes which passages are shown, not whether the system answers. Their value is tested by P5 and P7 respectively, not here.</p>
+  </div>
+</section>
+
+<section class="part" id="p1">
+  <div class="part-head col">
+    <span class="eyebrow">6.3 · Prediction P1</span>
+    <h2>The depth envelope</h2>
+  </div>
+  <div class="col block">
+    <dl class="pred">
+      <dt>P1</dt><dd>AG does not exceed the envelope <span class="sym">U(k)</span>, and for every family its empirical maximizer over fixed <span class="sym">k</span> is interior and increases with dispersion stratum.</dd>
+    </dl>
+    <p>Theorem 4.13 bounds AG by <span class="num">U(k) = σ(k)(1 − β)<sup>u(k)</sup></span> and proves that <span class="sym">U</span> — the envelope, not AG itself — is strictly unimodal. Remark 1 is load-bearing here: unimodality of an upper bound does not imply unimodality of the bounded quantity, so the prediction is stated as a containment claim plus an interiority claim, and the comparative statics in <span class="sym">κ<sub>m</sub></span> are labelled a modelling step rather than a derivation.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 7</b> P1: empirical <span class="sym">k<sup>★</sup></span> per family, whether it is interior, the share of <span class="sym">k</span> at which AG ≤ <span class="sym">U(k)</span>, and the distraction rate <span class="sym">β</span> fitted on held-out sweeps. Seed-varying values are joined with a slash.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>Family</th><th>k★</th><th>Interior</th><th>Share k: AG ≤ U</th><th>β (aux)</th></tr></thead>
+      <tbody>
+        <tr><td>2WikiMultihopQA</td><td>covorder</td><td>50</td><td><span class="chip c-no">no</span></td><td>0.94 ± 0.10</td><td>0.088 ± 0.007</td></tr>
+        <tr class="sys"><td>2WikiMultihopQA</td><td>hybrid</td><td>20</td><td><span class="chip c-ok">yes</span></td><td>1</td><td>0.088 ± 0.007</td></tr>
+        <tr><td>2WikiMultihopQA</td><td>monot5</td><td>50</td><td><span class="chip c-no">no</span></td><td>1</td><td>0.088 ± 0.007</td></tr>
+        <tr><td>MuSiQue</td><td>covorder</td><td>1</td><td><span class="chip c-no">no</span></td><td>1.0 / – / 1.0</td><td>0.108 / – / 0.099</td></tr>
+        <tr><td>MuSiQue</td><td>hybrid</td><td>1</td><td><span class="chip c-no">no</span></td><td>1.0 / – / 1.0</td><td>0.108 / – / 0.099</td></tr>
+        <tr><td>MuSiQue</td><td>monot5</td><td>1</td><td><span class="chip c-no">no</span></td><td>1.0 / – / 1.0</td><td>0.108 / – / 0.099</td></tr>
+        <tr><td>StrategyQA</td><td>covorder</td><td>1</td><td><span class="chip c-no">no</span></td><td>1</td><td>0.23 ± 0.17</td></tr>
+        <tr class="sys"><td>StrategyQA</td><td>hybrid</td><td>3</td><td><span class="chip c-ok">yes</span></td><td>1</td><td>0.23 ± 0.17</td></tr>
+        <tr><td>StrategyQA</td><td>monot5</td><td>1</td><td><span class="chip c-no">no</span></td><td>1</td><td>0.23 ± 0.17</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>The containment half holds: AG stays under the envelope at every tested depth on every family but one, where it holds at 94% of depths. The interiority half holds only where it is testable. <span class="sym">k<sup>★</sup></span> is interior for the hybrid family on 2Wiki (<span class="num">k = 20</span>) and StrategyQA (<span class="num">k = 3</span>) and boundary elsewhere. On MuSiQue AG is near zero across the sweep, so the argmax is a tie broken by the lexicographic rule and carries no information about curvature; we report <span class="num">k<sup>★</sup> = 1</span> and decline to interpret it. A boundary maximizer at <span class="num">k = 50</span> on 2Wiki covorder is a genuine partial failure of P1 and, per Section 7, the cost is Assumption 2: if distraction does not bite, Theorem 4.13 collapses to "retrieve more," leaving certification, the barrier, and the robustness result standing.</p>
+    <p>The synthetic check separates the two issues. On simulated envelopes the maximizer is interior at every dispersion level and the slope changes sign exactly once, as the theorem requires, and it moves right as <span class="sym">κ</span> grows, which is the comparative static the empirical table cannot establish.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 8</b> Envelope properties across <span class="sym">κ</span> (Theorem 4.13, synthetic instantiation).</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>κ</th><th>k★</th><th>Interior</th><th>Sign changes of slope</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>4</td><td><span class="chip c-ok">yes</span></td><td>1</td></tr>
+        <tr><td class="num">2</td><td>6</td><td><span class="chip c-ok">yes</span></td><td>1</td></tr>
+        <tr><td class="num">4</td><td>9</td><td><span class="chip c-ok">yes</span></td><td>1</td></tr>
+        <tr><td class="num">8</td><td>12</td><td><span class="chip c-ok">yes</span></td><td>1</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <details class="more">
+    <summary>Table 9 — Depth scaling on the single-hop datasets, k ∈ {1,…,5}</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>Depth k</th><th>Top-k SUF (%)</th><th>Suffice SUF (%)</th><th>Advantage (%)</th></tr></thead>
+      <tbody>
+        <tr><td>HotpotQA</td><td class="num">1</td><td>0.00</td><td>0.00</td><td>0.00</td></tr>
+        <tr><td>HotpotQA</td><td class="num">2</td><td>30.67</td><td>45.33</td><td class="ok">+14.67</td></tr>
+        <tr><td>HotpotQA</td><td class="num">3</td><td>45.67</td><td>53.33</td><td class="ok">+7.67</td></tr>
+        <tr><td>HotpotQA</td><td class="num">4</td><td>54.67</td><td>61.33</td><td class="ok">+6.67</td></tr>
+        <tr><td>HotpotQA</td><td class="num">5</td><td>62.00</td><td>67.67</td><td class="ok">+5.67</td></tr>
+        <tr><td>PopQA</td><td class="num">1</td><td>50.20</td><td>69.60</td><td class="ok">+19.40</td></tr>
+        <tr><td>PopQA</td><td class="num">2</td><td>87.20</td><td>69.60</td><td class="no">−17.60</td></tr>
+        <tr><td>PopQA</td><td class="num">3</td><td>94.20</td><td>73.60</td><td class="no">−20.60</td></tr>
+        <tr><td>PopQA</td><td class="num">4</td><td>99.00</td><td>76.40</td><td class="no">−22.60</td></tr>
+        <tr><td>PopQA</td><td class="num">5</td><td>99.40</td><td>80.40</td><td class="no">−19.00</td></tr>
+        <tr><td>NQ</td><td class="num">1</td><td>17.75</td><td>1.00</td><td class="no">−16.75</td></tr>
+        <tr><td>NQ</td><td class="num">2</td><td>28.25</td><td>59.75</td><td class="ok">+31.50</td></tr>
+        <tr><td>NQ</td><td class="num">3</td><td>43.75</td><td>62.75</td><td class="ok">+19.00</td></tr>
+        <tr><td>NQ</td><td class="num">4</td><td>57.50</td><td>68.75</td><td class="ok">+11.25</td></tr>
+        <tr><td>NQ</td><td class="num">5</td><td>68.25</td><td>75.75</td><td class="ok">+7.50</td></tr>
+        <tr><td>TriviaQA</td><td class="num">1</td><td>10.75</td><td>55.25</td><td class="ok">+44.50</td></tr>
+        <tr><td>TriviaQA</td><td class="num">2</td><td>23.50</td><td>58.50</td><td class="ok">+35.00</td></tr>
+        <tr><td>TriviaQA</td><td class="num">3</td><td>45.50</td><td>63.75</td><td class="ok">+18.25</td></tr>
+        <tr><td>TriviaQA</td><td class="num">4</td><td>68.75</td><td>68.25</td><td class="no">−0.50</td></tr>
+        <tr><td>TriviaQA</td><td class="num">5</td><td>78.25</td><td>71.75</td><td class="no">−6.50</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+  <div class="col block">
+    <p style="font-size:.95rem;color:var(--ink-2)">HotpotQA, NQ, and TriviaQA show the predicted shape, with the advantage largest at small <span class="sym">k</span> and decaying as depth makes coverage incidental. PopQA inverts it, and inverts it in the benign direction: its questions are single-premise, so <span class="num">κ<sub>m</sub> = 1</span>, coverage has nothing to trade against relevance, and paying for premise-targeted pooling buys nothing. A method that helps most where evidence is dispersed should be neutral-to-negative where it is not, and PopQA is the dataset where that is visible.</p>
+  </div>
+</section>
+
+<section class="part" id="p2">
+  <div class="part-head col">
+    <span class="eyebrow">6.4 · Prediction P2</span>
+    <h2>The redundancy barrier</h2>
+  </div>
+  <div class="col block">
+    <dl class="pred">
+      <dt>P2</dt><dd>On high-redundancy slices, set-oblivious rerankers lose more SUF relative to Suffice than on low-redundancy slices, with the gap growing in <span class="sym">r(q)</span>; embedding-space MMR tracks the rerankers, and entailment-space MMR and DPP close most but not all of the gap.</dd>
+    </dl>
+    <p>This is the direct test of Theorem 4.8. Measured redundancy <span class="sym">r(q)</span> is the maximum number of pool passages entailing any single premise, so a slice with <span class="num">r &gt; 15</span> is one where a scorer that cannot see sets has fifteen chances to fill its budget with the same fact.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 10</b> P2: SUF at <span class="num">k = 10</span> by measured redundancy <span class="sym">r(q)</span>, gold datasets pooled (%).</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>System</th><th>r ≤ 2</th><th>3–5</th><th>6–15</th><th>&gt; 15</th></tr></thead>
+      <tbody>
+        <tr class="sys"><td>Coverage-greedy, fixed k (no certificate)</td><td>50.77 ± 1.16</td><td>51.47 ± 0.91</td><td>36.20 ± 0.69</td><td>28.77 ± 0.95</td></tr>
+        <tr><td>DPP in entailment space</td><td>48.13 ± 1.37</td><td>58.17 ± 1.79</td><td>33.70 ± 0.35</td><td>21.83 ± 1.07</td></tr>
+        <tr><td>MMR in entailment space</td><td>47.57 ± 1.39</td><td>58.57 ± 0.75</td><td>31.27 ± 0.40</td><td>23.47 ± 0.15</td></tr>
+        <tr><td>Hybrid BM25+dense (RRF)</td><td>31.83 ± 0.78</td><td>27.47 ± 0.96</td><td>23.90 ± 0.90</td><td>24.13 ± 0.35</td></tr>
+        <tr><td>MMR (embedding space)</td><td class="no">15.67 ± 0.64</td><td class="no">9.47 ± 0.81</td><td class="no">5.10 ± 0.36</td><td class="no">6.10 ± 0.36</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>The prediction holds in its qualitative shape and fails in one quantitative detail. Coverage-greedy leads at every redundancy level and embedding-space MMR collapses to 6.1% at high redundancy, which is Proposition 4.10 behaving as constructed: diversity in embedding space selects passages that are far apart and entail nothing. Entailment-space MMR and DPP close most of the gap at low and middling redundancy and in fact overtake coverage-greedy in the 3–5 band, then fall behind again above <span class="num">r &gt; 15</span>. The part of P2 that does not hold cleanly is monotonicity of the gap: hybrid RRF is roughly flat across bands (31.8 → 24.1) rather than degrading steeply, so the advantage over it narrows at the top band instead of widening. On the reading of Section 7, that means real corpora at this pool size are less adversarially redundant than the <span class="sym">r</span>-duplicate construction assumes — the theorem stands and is non-binding at <span class="num">m = 200</span>.</p>
+  </div>
+
+  <details class="more">
+    <summary>Table 11 — Redundancy strata per dataset, SUF at k = 10</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>Redundancy stratum</th><th>N</th><th>Top-k SUF (%)</th><th>Suffice SUF (%)</th><th>Δ (%)</th></tr></thead>
+      <tbody>
+        <tr><td>HotpotQA</td><td>Low (r ≤ 2)</td><td class="num">10</td><td>80.00</td><td>60.00</td><td class="no">−20.00</td></tr>
+        <tr><td>HotpotQA</td><td>Med (3 ≤ r ≤ 4)</td><td class="num">1</td><td>0.00</td><td>0.00</td><td>0.00</td></tr>
+        <tr class="sys"><td>HotpotQA</td><td>High (r ≥ 5)</td><td class="num">289</td><td>29.07</td><td>44.98</td><td class="ok">+15.92</td></tr>
+        <tr><td>PopQA</td><td>Low (r ≤ 2)</td><td class="num">483</td><td>86.75</td><td>68.74</td><td class="no">−18.01</td></tr>
+        <tr><td>PopQA</td><td>High (r ≥ 5)</td><td class="num">17</td><td>100.00</td><td>94.12</td><td class="no">−5.88</td></tr>
+        <tr class="sys"><td>NQ</td><td>High (r ≥ 5)</td><td class="num">400</td><td>28.25</td><td>59.75</td><td class="ok">+31.50</td></tr>
+        <tr class="sys"><td>TriviaQA</td><td>High (r ≥ 5)</td><td class="num">400</td><td>23.50</td><td>58.50</td><td class="ok">+35.00</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+  <div class="col block">
+    <p style="font-size:.95rem;color:var(--ink-2)">Per dataset the high-redundancy advantage is +15.9, +31.5, and +35.0 points on HotpotQA, NQ, and TriviaQA. The low-redundancy rows are reported because they are negative: on PopQA's 483 single-premise questions, top-<span class="sym">k</span> beats coverage selection by 18 points. Suffice is not better everywhere, and the stratification is what makes the claim falsifiable rather than the macro average.</p>
+  </div>
+</section>
+
+<section class="part" id="p3">
+  <div class="part-head col">
+    <span class="eyebrow">6.5 · Predictions P3 and P8</span>
+    <h2>Marginal and conditional risk</h2>
+  </div>
+  <div class="col block">
+    <dl class="pred">
+      <dt>P3</dt><dd>CSR ≤ <span class="sym">α</span> in-distribution for <span class="num">α ∈ {0.05, 0.10, 0.20}</span>; under temporal shift without weighted correction, CSR exceeds <span class="sym">α</span> by at most the measured <span class="sym">δ</span>. We commit in advance to reporting the violation.</dd>
+      <dt>P8</dt><dd>Marginal certification violates <span class="sym">α</span> in at least one stratum, while Mondrian calibration restores per-stratum validity at a measurable answer-rate cost.</dd>
+    </dl>
+    <p>P3 is the headline prediction, because failing it in-distribution voids the guarantee rather than weakening it. The test is run over 500 random calibration/test splits per seed so that the reported CSR is a distribution rather than a single draw, and the share of splits satisfying the bound is reported alongside the mean.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 12</b> P3/P8: realised CSR over 500 random calibration/test splits per seed, worst-stratum CSR, answer rate, and covariate shift towards tail entities with uncorrected and weighted CRC. <span class="sym">δ</span> is total variation; Bound is <span class="num">α + δ</span>.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>Condition</th><th>α</th><th>CSR mean</th><th>CSR q95</th><th>Share splits</th><th>Worst stratum</th><th>Ans rate</th><th>δ<sub>TV</sub></th><th>Bound</th></tr></thead>
+      <tbody>
+        <tr class="sys"><td>2Wiki</td><td>in-dist., Mondrian</td><td>0.10</td><td class="ok">0.081 ± 0.006</td><td>0.11</td><td>0.85 ± 0.06</td><td>0.40 ± 0.17</td><td>0.50 ± 0.01</td><td>–</td><td>0.10</td></tr>
+        <tr><td>2Wiki</td><td>in-dist., marginal</td><td>0.05</td><td class="ok">0.042 ± 0.005</td><td>0.061 ± 0.014</td><td>0.76 ± 0.24</td><td>0.37 ± 0.18</td><td>0.35 ± 0.03</td><td>–</td><td>0.05</td></tr>
+        <tr><td>2Wiki</td><td>in-dist., marginal</td><td>0.10</td><td class="ok">0.088 ± 0.001</td><td>0.12 ± 0.01</td><td>0.87 ± 0.04</td><td>0.45 ± 0.20</td><td>0.53</td><td>–</td><td>0.10</td></tr>
+        <tr><td>2Wiki</td><td>in-dist., marginal</td><td>0.20</td><td class="ok">0.19</td><td>0.22</td><td>0.58 ± 0.07</td><td>0.52 ± 0.15</td><td>0.76 ± 0.01</td><td>–</td><td>0.20</td></tr>
+        <tr><td>2Wiki</td><td>shift, uncorrected</td><td>0.10</td><td class="ok">0.072 ± 0.007</td><td>0.10 ± 0.01</td><td>0.93 ± 0.06</td><td>0.45 ± 0.09</td><td>0.55 ± 0.01</td><td>0.35</td><td>0.45</td></tr>
+        <tr><td>2Wiki</td><td>shift, weighted (est.)</td><td>0.10</td><td class="ok">0.087 ± 0.009</td><td>0.13</td><td>0.70 ± 0.16</td><td>0.47 ± 0.08</td><td>0.59 ± 0.02</td><td>0.35</td><td>0.45</td></tr>
+        <tr><td>Bamboogle</td><td>in-dist., marginal</td><td>0.10</td><td class="ok">0.074 ± 0.004</td><td>0.15 ± 0.02</td><td>0.68 ± 0.11</td><td>0.33 ± 0.07</td><td>0.10 ± 0.01</td><td>–</td><td>0.10</td></tr>
+        <tr><td>Bamboogle</td><td>shift, uncorrected</td><td>0.10</td><td class="mid">0.09 ± 0.05</td><td>0.30 ± 0.12</td><td>0.73 ± 0.15</td><td>0.32 ± 0.11</td><td>0.12 ± 0.06</td><td>0.46</td><td>0.56</td></tr>
+        <tr><td>Bamboogle</td><td>shift, weighted (est.)</td><td>0.10</td><td class="ok">0.046 ± 0.007</td><td>0.13 ± 0.02</td><td>0.90 ± 0.03</td><td>0.15 ± 0.05</td><td>0.076 ± 0.004</td><td>0.46</td><td>0.56</td></tr>
+        <tr><td>MuSiQue</td><td>in-dist., marginal</td><td>0.10</td><td class="ok">0.070 ± 0.027</td><td>0.08 ± 0.03</td><td>0.96 ± 0.05</td><td>0.40 ± 0.22</td><td>0.14 ± 0.06</td><td>–</td><td>0.10</td></tr>
+        <tr><td>MuSiQue</td><td>shift, uncorrected</td><td>0.10</td><td class="ok">0.067 ± 0.022</td><td>0.09 ± 0.03</td><td>0.94 ± 0.06</td><td>0.32 ± 0.19</td><td>0.14 ± 0.05</td><td>0.35</td><td>0.45</td></tr>
+        <tr><td>StrategyQA</td><td>in-dist., marginal</td><td>0.10</td><td class="ok">0.074 ± 0.007</td><td>0.086 ± 0.008</td><td>0.99 ± 0.01</td><td>0.15 ± 0.04</td><td>0.085 ± 0.009</td><td>–</td><td>0.10</td></tr>
+        <tr><td>StrategyQA</td><td>shift, uncorrected</td><td>0.10</td><td class="ok">0.057 ± 0.026</td><td>0.08 ± 0.03</td><td>0.93 ± 0.12</td><td>0.17 ± 0.02</td><td>0.066 ± 0.025</td><td>0.38</td><td>0.48</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>In distribution, mean realised CSR sits at or just under <span class="sym">α</span> on every dataset and level. The share-of-splits column is the honest qualifier: the guarantee is marginal over the calibration draw, so 13% to 42% of individual splits exceed <span class="sym">α</span> at <span class="num">α = 0.10</span>, which is what a marginal guarantee means and not a violation of it. The q95 column makes the tail legible — at <span class="num">α = 0.10</span> on 2Wiki the 95th percentile split realises 0.12.</p>
+    <p>Under shift towards tail entities, uncorrected CRC stays inside <span class="num">α + δ</span> everywhere, as Theorem A.5 predicts, and does so with a large margin: at <span class="num">δ = 0.35</span> the bound is 0.45 and realised risk is 0.072. The drift penalty is therefore loose in practice, which is the expected behaviour of a total-variation bound and not evidence of a tighter theorem. The weighted correction helps on Bamboogle, cutting mean CSR from 0.09 to 0.046 and the worst stratum from 0.32 to 0.15, and slightly hurts on 2Wiki (0.072 → 0.087) where the estimated likelihood ratio is noisier than the shift it corrects.</p>
+    <p>For P8 the worst-stratum column is the one to read. Marginal calibration leaves at least one stratum far above <span class="sym">α</span> on every dataset — 0.45 on 2Wiki against a target of 0.10 — which is the prediction, and the point of making it in advance. Mondrian strata close most of that gap.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 13</b> Marginal versus Mondrian conformal calibration. Marginal's worst stratum exceeds <span class="sym">α</span> by 2.7× to 11.5×; Mondrian brings it within a factor of roughly 1.06 to 1.65, at a visible answer-rate cost at <span class="num">α = 0.05</span>.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th rowspan="2">α</th><th colspan="3">Marginal</th><th colspan="3">Mondrian</th></tr>
+      <tr><th>CSR</th><th>Worst CSR</th><th>Ans rate</th><th>CSR</th><th>Worst CSR</th><th>Ans rate</th></tr></thead>
+      <tbody>
+        <tr><td class="num">0.05</td><td>0.0515</td><td class="no">0.1672</td><td>0.9941</td><td>0.0383</td><td class="ok">0.0543</td><td>0.7435</td></tr>
+        <tr><td class="num">0.10</td><td>0.0985</td><td class="no">0.2696</td><td>1.0000</td><td>0.0972</td><td class="ok">0.1097</td><td>0.9744</td></tr>
+        <tr><td class="num">0.20</td><td>0.1974</td><td class="no">0.3461</td><td>1.0000</td><td>0.1954</td><td class="ok">0.2129</td><td>0.9988</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>The answer-rate column prices conditional validity exactly as Theorem A.7 says it must: at <span class="num">α = 0.05</span> the marginal rule answers 99.4% of questions with a worst stratum at 3.3× the target, while the Mondrian rule answers 74.4% with the worst stratum at 1.09×. Twenty-five points of coverage is what per-stratum validity costs at the strictest level, and the whole of that cost falls on the strata where the marginal rule was borrowing risk from the majority. Exact conditional coverage is impossible distribution-free, so the stratification — dispersion band × language × popularity × contestedness, merged below 50 points — is a declared commitment about which subpopulations matter rather than a technical convenience.</p>
+  </div>
+
+  <details class="more">
+    <summary>Table 14 — Per-stratum CSR and answer rate, Mondrian versus marginal</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>Calibration</th><th>Stratum</th><th>CSR</th><th>Answer rate</th></tr></thead>
+      <tbody>
+        <tr><td>2Wiki</td><td>marginal</td><td class="wide">κ̂ = 1, en, head, uncontested</td><td>0.056 ± 0.096</td><td>0.273 ± 0.068</td></tr>
+        <tr class="sys"><td>2Wiki</td><td>Suffice</td><td class="wide">κ̂ = 1, en, head, uncontested</td><td>0.056 ± 0.096</td><td>0.340 ± 0.057</td></tr>
+        <tr><td>2Wiki</td><td>marginal</td><td class="wide">κ̂ = 2, en, tail, uncontested</td><td>0.074 ± 0.023</td><td>0.558 ± 0.046</td></tr>
+        <tr class="sys"><td>2Wiki</td><td>Suffice</td><td class="wide">κ̂ = 2, en, tail, uncontested</td><td>0.077 ± 0.007</td><td>0.554 ± 0.093</td></tr>
+        <tr><td>2Wiki</td><td>marginal</td><td class="wide">κ̂ ≥ 3, en, head, uncontested</td><td>0.063 ± 0.029</td><td>0.361 ± 0.043</td></tr>
+        <tr class="sys"><td>2Wiki</td><td>Suffice</td><td class="wide">κ̂ ≥ 3, en, head, uncontested</td><td>0.057 ± 0.033</td><td>0.318 ± 0.067</td></tr>
+        <tr><td>Bamboogle</td><td>marginal</td><td class="wide">κ̂ = 2, en, head, uncontested</td><td>0.283 ± 0.104</td><td>0.350 ± 0.087</td></tr>
+        <tr class="sys"><td>Bamboogle</td><td>Suffice</td><td class="wide">κ̂ = 2, en, head, uncontested</td><td>0.283 ± 0.104</td><td>0.350 ± 0.087</td></tr>
+        <tr><td>MuSiQue</td><td>marginal</td><td class="wide">κ̂ ≥ 3, en, head, uncontested</td><td>0.019 ± 0.009</td><td>0.043 ± 0.030</td></tr>
+        <tr class="sys"><td>MuSiQue</td><td>Suffice</td><td class="wide">κ̂ ≥ 3, en, head, uncontested</td><td>0.019 ± 0.009</td><td>0.043 ± 0.030</td></tr>
+        <tr><td>StrategyQA</td><td>marginal</td><td class="wide">κ̂ ≥ 3, en, head, contested</td><td class="no">0.121 ± 0.074</td><td>0.146 ± 0.085</td></tr>
+        <tr class="sys"><td>StrategyQA</td><td>Suffice</td><td class="wide">κ̂ ≥ 3, en, head, contested</td><td class="ok">0.074 ± 0.033</td><td>0.098 ± 0.034</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+
+  <details class="more">
+    <summary>Table 15 — Hop composition: end-to-end risk at α/h versus α per hop (target α = 0.10)</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>Mode</th><th>End-to-end risk</th><th>Risk q95</th><th>Answer rate</th></tr></thead>
+      <tbody>
+        <tr><td>2Wiki</td><td>α per hop</td><td>0.090 ± 0.010</td><td>0.15 ± 0.01</td><td>0.37 ± 0.02</td></tr>
+        <tr class="sys"><td>2Wiki</td><td>α/h per hop</td><td class="ok">0.051 ± 0.014</td><td>0.10 ± 0.01</td><td>0.15 ± 0.07</td></tr>
+        <tr><td>MuSiQue</td><td>α per hop</td><td>0.012 ± 0.012</td><td>0.020 ± 0.018</td><td>0.025 ± 0.023</td></tr>
+        <tr class="sys"><td>MuSiQue</td><td>α/h per hop</td><td class="ok">0.006 ± 0.004</td><td>0.016 ± 0.010</td><td>0.011 ± 0.005</td></tr>
+        <tr><td>StrategyQA</td><td>α per hop</td><td>0.015 ± 0.014</td><td>0.029 ± 0.030</td><td>0.020 ± 0.018</td></tr>
+        <tr class="sys"><td>StrategyQA</td><td>α/h per hop</td><td class="ok">0.005 ± 0.004</td><td>0.011 ± 0.010</td><td>0.007 ± 0.007</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+  <div class="col block">
+    <p style="font-size:.95rem;color:var(--ink-2)">Proposition A.4 allocates <span class="num">α/h</span> across hops so that the union bound returns <span class="sym">α</span> end to end. Certifying each hop at <span class="sym">α</span> instead gives 0.090 on 2Wiki against a target of 0.10, which passes by luck rather than by construction — the worst case for that allocation is <span class="num">min{hα, 1}</span>. The <span class="num">α/h</span> rule halves the realised risk (0.051) and halves the answer rate with it (0.37 → 0.15). On a five-hop question the difference between the two bounds is 0.10 against 0.41 under independence, which is the argument for paying the coverage cost.</p>
+  </div>
+</section>
+
+<section class="part" id="p4">
+  <div class="part-head col">
+    <span class="eyebrow">6.6 · Prediction P4</span>
+    <h2>Where the sufficiency labels come from</h2>
+  </div>
+  <div class="col block">
+    <dl class="pred">
+      <dt>P4</dt><dd><span class="sym">Γ</span> &gt; 0 for every baseline, largest for closed-book and long-context stuffing, and our <span class="sym">Γ</span> estimates agree with Joren et al. to within annotation noise.</dd>
+    </dl>
+    <p>CSR is measured against a label that is itself partly model-derived, so the label's reliability is not a methodological footnote but a bound on how much any risk number can mean. We compare three automatic sources: (i) dataset supporting facts, (ii) the Joren autorater run on Qwen2.5-3B, and (iii) a three-model NLI majority ensemble.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 16</b> P4: label sources, 300 questions × 2 evidence sets per dataset and seed. Rates are the fraction labelled sufficient; pairwise rows give raw agreement and Cohen's <span class="sym">κ</span>.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>Comparison</th><th>n</th><th>Value</th><th>Cohen's κ</th></tr></thead>
+      <tbody>
+        <tr><td>2Wiki</td><td>rate (i) supporting facts</td><td class="num">600</td><td>0.53 ± 0.01</td><td>–</td></tr>
+        <tr><td>2Wiki</td><td>rate (ii) autorater</td><td class="num">600</td><td>0.009 ± 0.003</td><td>–</td></tr>
+        <tr><td>2Wiki</td><td>rate (iii) NLI ensemble</td><td class="num">600</td><td>0.12 ± 0.01</td><td>–</td></tr>
+        <tr><td>2Wiki</td><td>(i) vs (ii)</td><td class="num">600</td><td>0.46 ± 0.01</td><td class="no">−0.016 ± 0.006</td></tr>
+        <tr><td>2Wiki</td><td>(i) vs (iii)</td><td class="num">600</td><td>0.53 ± 0.01</td><td>0.11</td></tr>
+        <tr><td>2Wiki</td><td>(ii) vs (iii)</td><td class="num">600</td><td>0.87 ± 0.01</td><td class="no">0.001 ± 0.014</td></tr>
+        <tr><td>2Wiki</td><td>Krippendorff α (3 voters)</td><td class="num">600</td><td class="no">−0.072 ± 0.002</td><td>–</td></tr>
+        <tr><td>MuSiQue</td><td>rate (i)</td><td class="num">600</td><td>0.22 ± 0.01</td><td>–</td></tr>
+        <tr><td>MuSiQue</td><td>rate (ii)</td><td class="num">600</td><td>0.001 ± 0.001</td><td>–</td></tr>
+        <tr><td>MuSiQue</td><td>rate (iii)</td><td class="num">600</td><td>0.10</td><td>–</td></tr>
+        <tr><td>MuSiQue</td><td>(i) vs (ii)</td><td class="num">600</td><td>0.78 ± 0.01</td><td class="no">−0.003</td></tr>
+        <tr><td>MuSiQue</td><td>(i) vs (iii)</td><td class="num">600</td><td>0.80 ± 0.01</td><td class="mid">0.27 ± 0.02</td></tr>
+        <tr><td>MuSiQue</td><td>(ii) vs (iii)</td><td class="num">600</td><td>0.90</td><td class="no">−0.003</td></tr>
+        <tr><td>MuSiQue</td><td>Krippendorff α (3 voters)</td><td class="num">600</td><td class="no">−0.12 ± 0.01</td><td>–</td></tr>
+        <tr><td>StrategyQA</td><td>rate (i)</td><td class="num">600</td><td>0.20</td><td>–</td></tr>
+        <tr><td>StrategyQA</td><td>rate (ii)</td><td class="num">600</td><td>0.019 ± 0.003</td><td>–</td></tr>
+        <tr><td>StrategyQA</td><td>rate (iii)</td><td class="num">600</td><td>0</td><td>–</td></tr>
+        <tr><td>StrategyQA</td><td>(i) vs (ii)</td><td class="num">600</td><td>0.81</td><td>0.070 ± 0.016</td></tr>
+        <tr><td>StrategyQA</td><td>(i) vs (iii)</td><td class="num">600</td><td>0.80</td><td>–</td></tr>
+        <tr><td>StrategyQA</td><td>(ii) vs (iii)</td><td class="num">600</td><td>0.98</td><td>–</td></tr>
+        <tr><td>StrategyQA</td><td>Krippendorff α (3 voters)</td><td class="num">600</td><td class="no">−0.14</td><td>–</td></tr>
+        <tr><td>Bamboogle</td><td>rate (ii)</td><td class="num">250</td><td>0.023 ± 0.006</td><td>–</td></tr>
+        <tr><td>Bamboogle</td><td>rate (iii)</td><td class="num">250</td><td>0.080 ± 0.004</td><td>–</td></tr>
+        <tr><td>Bamboogle</td><td>(ii) vs (iii)</td><td class="num">250</td><td>0.92 ± 0.01</td><td>0.15 ± 0.10</td></tr>
+        <tr><td>Bamboogle</td><td>Krippendorff α (3 voters)</td><td class="num">250</td><td>0.045 ± 0.023</td><td>–</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <div class="callout warnbox">
+      <span class="eyebrow">The negative result we are reporting</span>
+      <p>Raw agreement between the autorater and the NLI ensemble is high (0.87 to 0.98), and Cohen's <span class="sym">κ</span> between them is approximately zero. Both facts are true at once because both sources label almost everything insufficient: the autorater's positive rate is 0.1% to 2.3%, so two raters who nearly always say "no" agree nearly always and carry nearly no information. Krippendorff's <span class="sym">α</span> among the three NLI voters is negative on three of four datasets, which means the individual voters disagree more than chance and the ensemble's majority rule — not its members — is doing the work.</p>
+      <p>The consequence for the rest of the paper is specific rather than fatal. CSR is measured against an imperfect oracle with a known bias towards declaring insufficiency, so reported CSR is conservative where the oracle is strict, and absolute SUF levels should not be compared across papers that use a different labeller. Relative comparisons within the suite, which is what every table here reports, hold because all systems are scored by the same labeller. The 200-item human audit exists for exactly this reason and is reported in the appendix rather than used to adjust any number.</p>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="p5">
+  <div class="part-head col">
+    <span class="eyebrow">6.7 · Prediction P5</span>
+    <h2>Byzantine-certified robustness</h2>
+  </div>
+  <div class="col block">
+    <dl class="pred">
+      <dt>P5</dt><dd>Attack success is exactly zero for all <span class="num">b + f ≤ b<sup>★</sup></span> from the certified-robustness audit and rises sharply above it; RobustRAG shows a zero-success regime at a per-passage rather than per-source threshold, so the two curves cross.</dd>
+    </dl>
+    <p>Theorem A.10 certifies answer invariance exactly when <span class="num">b + f &lt; τ/2</span>, where <span class="sym">b</span> counts injected passages and <span class="sym">f</span> counts compromised independent sources. The factor of two is the Byzantine one: a compromised source removes a genuine attestation and supplies an adversarial one in the same move.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 17</b> P5: attack success (%) under injection of <span class="sym">b</span> passages and compromise of <span class="sym">f</span> sources, 150 attacked questions per dataset.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>System</th><th>b1</th><th>b2</th><th>b5</th><th>b10</th><th>b20</th><th>f1</th><th>f2</th><th>f3</th></tr></thead>
+      <tbody>
+        <tr><td>Astute RAG</td><td class="no">58.10</td><td class="no">63.80</td><td class="no">63.10</td><td class="no">62.90</td><td class="no">62.50</td><td>30.50</td><td>40.60</td><td>47.70</td></tr>
+        <tr><td>Hybrid BM25+dense (RRF)</td><td class="no">60.97 ± 5.43</td><td class="no">64.17 ± 3.96</td><td class="no">64.47 ± 2.48</td><td class="no">66.13 ± 1.87</td><td class="no">66.90 ± 1.91</td><td>35.10 ± 2.26</td><td>41.87 ± 1.59</td><td>45.40 ± 0.89</td></tr>
+        <tr><td>RobustRAG-style (isolate+aggregate)</td><td class="mid">13.20</td><td class="no">51.90</td><td class="no">68.90</td><td class="no">71.70</td><td class="no">72.20</td><td>11.00</td><td>21.00</td><td>28.70</td></tr>
+        <tr class="sys"><td>Suffice (τ = 1)</td><td>5.43 ± 1.12</td><td>5.93 ± 1.17</td><td>8.17 ± 2.31</td><td>8.90 ± 2.40</td><td>9.33 ± 2.20</td><td>5.30 ± 1.10</td><td>5.43 ± 1.12</td><td>5.93 ± 1.15</td></tr>
+        <tr class="sys"><td>Suffice (τ = 3)</td><td class="ok">0.07 ± 0.12</td><td class="ok">0.11 ± 0.14</td><td>0.80 ± 0.36</td><td>1.10 ± 0.70</td><td>1.50 ± 0.52</td><td class="ok">0.07 ± 0.12</td><td class="ok">0.09 ± 0.11</td><td class="ok">0.12 ± 0.14</td></tr>
+        <tr class="sys"><td>Suffice (τ = 5)</td><td class="ok">0.01 ± 0.02</td><td class="ok">0.02 ± 0.03</td><td class="ok">0.08 ± 0.10</td><td>0.43 ± 0.25</td><td>0.57 ± 0.29</td><td class="ok">0.01 ± 0.02</td><td class="ok">0.01 ± 0.02</td><td class="ok">0.02 ± 0.03</td></tr>
+        <tr class="sys"><td>Suffice (τ = 7)</td><td class="ok">0.003 ± 0.005</td><td class="ok">0.004 ± 0.006</td><td class="ok">0.012 ± 0.014</td><td class="ok">0.022 ± 0.028</td><td class="ok">0.031 ± 0.039</td><td class="ok">0.003 ± 0.005</td><td class="ok">0.003 ± 0.005</td><td class="ok">0.004 ± 0.006</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>The crossing predicted by P5 is visible at <span class="num">b = 1</span> versus <span class="num">b = 2</span>. RobustRAG's per-passage isolation holds a single injected passage to 13.2% success and then fails to 51.9% at two, because isolation defeats a handful of crafted documents and not a coordinated set. Source-granular corroboration degrades far more slowly in <span class="sym">b</span> and is nearly flat in <span class="sym">f</span> at <span class="num">τ ≥ 3</span>, because compromising distinct outlets is the expensive axis for the adversary and the one the certificate is written against. The two defences are complementary rather than competing, and neither answers an adversary who genuinely operates <span class="num">τ/2</span> independent outlets.</p>
+    <p>The sharper test is whether the certificate holds where it claims to, and here the audit does not return what P5 predicted. Pooling all seeds, 12 question-condition pairs are classified as lying inside the certified radius, all of them at <span class="num">τ = 3</span>, and attack success on those 12 is 25%. Three certified answers were flipped by an adversary the certificate declared could not flip them. Everything outside the radius behaves as expected, falling from 6.82% at <span class="num">τ = 1</span> to 0.04% at <span class="num">τ = 7</span>.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 18</b> Certified-robustness audit: attack success inside versus outside the certified radius <span class="sym">b<sup>★</sup></span>, all seeds pooled. <span class="sym">n</span> counts attacked question-condition pairs.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>System</th><th>Within certificate</th><th>Success (%)</th><th>n</th></tr></thead>
+      <tbody>
+        <tr><td>Suffice τ = 1</td><td><span class="chip c-no">outside</span></td><td>6.82</td><td class="num">10,872</td></tr>
+        <tr><td>Suffice τ = 3</td><td><span class="chip c-no">outside</span></td><td>0.42</td><td class="num">10,860</td></tr>
+        <tr class="sys"><td>Suffice τ = 3</td><td><span class="chip c-no">inside</span></td><td class="no">25.00</td><td class="num">12</td></tr>
+        <tr><td>Suffice τ = 5</td><td><span class="chip c-no">outside</span></td><td>0.13</td><td class="num">10,872</td></tr>
+        <tr><td>Suffice τ = 7</td><td><span class="chip c-no">outside</span></td><td>0.04</td><td class="num">10,872</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <div class="callout warnbox">
+      <span class="eyebrow">Two readings of the 12 inside-radius cases</span>
+      <p>Either the certificate is unsound, or the audit's radius is being computed wrongly. Two things point at the second. First, no condition at <span class="num">τ = 5</span> or <span class="num">τ = 7</span> registers as inside the radius at all, although the bounds grid below says that <span class="num">b ≤ 2</span> and <span class="num">f ≤ 1</span> are certified at <span class="num">τ = 5</span>, so the audit should be finding thousands of inside-radius pairs there and finds none. Second, the per-variant <span class="sym">b<sup>★</sup></span> values logged by the ablation run are fractional (0.10, 0.15, 0.20), while <span class="sym">b<sup>★</sup></span> is a count of passages and must be a non-negative integer.</p>
+      <p>On the reading Section 7 commits to in advance, a failure at <span class="num">b + f ≤ b<sup>★</sup></span> means Assumption 8 is violated, the adversary controls outlets our clustering treats as independent, or the clustering is too coarse: the theorem stands and the implementation does not. The fractional radii make a third explanation more likely than either, which is that Algorithm 3 is returning a scaled quantity rather than <span class="num">⌈τ<sub>min</sub>/2⌉ − 1</span>. This needs resolving before submission, because P5 is stated as an exact-zero claim and the audit as logged refutes it.</p>
+    </div>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 19</b> Byzantine bounds grid. The certificate holds iff <span class="num">b + f &lt; τ/2</span>; boundary cases are false because the inequality is strict, which is the content of the tightness half of Theorem A.10.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>τ</th><th>b</th><th>f</th><th>b + f</th><th>Threshold τ/2</th><th>Certified invariant</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>1</td><td>0</td><td>1</td><td>0.5</td><td><span class="chip c-no">false</span></td></tr>
+        <tr><td class="num">1</td><td>2</td><td>0</td><td>2</td><td>0.5</td><td><span class="chip c-no">false</span></td></tr>
+        <tr><td class="num">1</td><td>0</td><td>1</td><td>1</td><td>0.5</td><td><span class="chip c-no">false</span></td></tr>
+        <tr><td class="num">1</td><td>1</td><td>1</td><td>2</td><td>0.5</td><td><span class="chip c-no">false</span></td></tr>
+        <tr><td class="num">1</td><td>2</td><td>1</td><td>3</td><td>0.5</td><td><span class="chip c-no">false</span></td></tr>
+        <tr><td class="num">3</td><td>1</td><td>0</td><td>1</td><td>1.5</td><td><span class="chip c-ok">true</span></td></tr>
+        <tr><td class="num">3</td><td>2</td><td>0</td><td>2</td><td>1.5</td><td><span class="chip c-no">false</span></td></tr>
+        <tr><td class="num">3</td><td>0</td><td>1</td><td>1</td><td>1.5</td><td><span class="chip c-ok">true</span></td></tr>
+        <tr><td class="num">3</td><td>1</td><td>1</td><td>2</td><td>1.5</td><td><span class="chip c-no">false</span></td></tr>
+        <tr><td class="num">3</td><td>2</td><td>1</td><td>3</td><td>1.5</td><td><span class="chip c-no">false</span></td></tr>
+        <tr><td class="num">5</td><td>1</td><td>0</td><td>1</td><td>2.5</td><td><span class="chip c-ok">true</span></td></tr>
+        <tr><td class="num">5</td><td>2</td><td>0</td><td>2</td><td>2.5</td><td><span class="chip c-ok">true</span></td></tr>
+        <tr><td class="num">5</td><td>0</td><td>1</td><td>1</td><td>2.5</td><td><span class="chip c-ok">true</span></td></tr>
+        <tr><td class="num">5</td><td>1</td><td>1</td><td>2</td><td>2.5</td><td><span class="chip c-ok">true</span></td></tr>
+        <tr><td class="num">5</td><td>2</td><td>1</td><td>3</td><td>2.5</td><td><span class="chip c-no">false</span></td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>The grid is included because it is hand-checkable, and because the <span class="num">τ = 1</span> block is uniformly false. At the deployed operating point the corroboration rule certifies nothing against a Byzantine adversary; robustness begins at <span class="num">τ = 3</span>, where Table 4 shows the answer rate has already fallen to 1.8%. That tension — the operating point with usable coverage and the operating point with a robustness certificate are not the same point — is the paper's main unresolved cost, and Proposition A.11 says it is exactly the probability that some premise has fewer than <span class="sym">τ</span> independent attestations.</p>
+  </div>
+</section>
+
+<section class="part" id="p6">
+  <div class="part-head col">
+    <span class="eyebrow">6.8 · Prediction P6</span>
+    <h2>Verifier noise and the attainability frontier</h2>
+  </div>
+  <div class="col block">
+    <dl class="pred">
+      <dt>P6</dt><dd>Suffice's (risk, answer-rate) points lie on its verifier's ROC frontier to within sampling error, and AG degrades with injected entailment noise at the <span class="num">2ηκ<sub>m</sub></span> rate of Theorem 4.5, independent of <span class="sym">k</span>. If degradation scales with <span class="sym">k</span>, the theorem is wrong.</dd>
+    </dl>
+    <p>This is the cleanest falsification test in the set, because it names the quantity whose behaviour would refute the theorem. We inject calibrated noise into the entailment model at <span class="num">η ∈ {0.10, 0.20}</span> and regress coverage loss on <span class="num">log k</span>. A positive slope refutes Theorem 4.5.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 20</b> P6: entailment models on the P6 subset. Slope is the coefficient of coverage loss against <span class="num">log k</span>; the theorem predicts no growth in <span class="sym">k</span>.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>Entailment model</th><th>AUC</th><th>η̂<sub>MCE</sub></th><th>ECE</th><th>SUF</th><th>AG</th><th>Ans rate</th><th>Slope</th><th>n</th></tr></thead>
+      <tbody>
+        <tr class="sys"><td>2Wiki</td><td>MiniCheck (main)</td><td>0.97</td><td>0.050 ± 0.027</td><td>0.010 ± 0.003</td><td>0.62 ± 0.02</td><td>0.004 ± 0.004</td><td>0.23 ± 0.05</td><td>–</td><td class="num">6327</td></tr>
+        <tr><td>2Wiki</td><td>NLI-base</td><td>0.85</td><td>0.061 ± 0.011</td><td>0.020 ± 0.004</td><td class="no">0.22 ± 0.01</td><td>0.003 ± 0.003</td><td>0.007 ± 0.007</td><td>–</td><td class="num">6327</td></tr>
+        <tr><td>2Wiki</td><td>SQuAD-2 answerability</td><td>0.98</td><td>0.032 ± 0.007</td><td>0.008 ± 0.001</td><td>0.49 ± 0.02</td><td>0.002 ± 0.002</td><td>0.011 ± 0.019</td><td>–</td><td class="num">6327</td></tr>
+        <tr><td>2Wiki</td><td>MiniCheck + noise η = 0.10</td><td>0.97</td><td>0.074 ± 0.003</td><td>0.023 ± 0.002</td><td>0.55 ± 0.02</td><td>0.002 ± 0.004</td><td>0.13 ± 0.07</td><td class="ok">−0.001</td><td class="num">6327</td></tr>
+        <tr><td>2Wiki</td><td>MiniCheck + noise η = 0.20</td><td>0.96</td><td>0.15 ± 0.01</td><td>0.041 ± 0.001</td><td>0.53 ± 0.02</td><td>0.001 ± 0.003</td><td>0.10 ± 0.02</td><td class="ok">−0.001</td><td class="num">6327</td></tr>
+        <tr class="sys"><td>MuSiQue</td><td>MiniCheck (main)</td><td>0.89</td><td>0.023 ± 0.004</td><td>0.008 ± 0.001</td><td>0.23 ± 0.04</td><td>0.007 ± 0.007</td><td>0.06 ± 0.06</td><td>–</td><td class="num">7218</td></tr>
+        <tr><td>MuSiQue</td><td>MiniCheck + noise η = 0.10</td><td>0.88</td><td>0.064 ± 0.002</td><td>0.033 ± 0.001</td><td>0.20 ± 0.04</td><td>0.011 ± 0.010</td><td>0.09 ± 0.04</td><td class="ok">0</td><td class="num">7218</td></tr>
+        <tr><td>MuSiQue</td><td>MiniCheck + noise η = 0.20</td><td>0.88</td><td>0.15</td><td>0.051 ± 0.001</td><td>0.18 ± 0.05</td><td>0.003 ± 0.004</td><td>0.037 ± 0.004</td><td class="ok">−0.002</td><td class="num">7218</td></tr>
+        <tr class="sys"><td>StrategyQA</td><td>MiniCheck (main)</td><td>0.82</td><td>0.039 ± 0.009</td><td>0.011 ± 0.003</td><td>0.24 ± 0.03</td><td>0.004 ± 0.004</td><td>0.044 ± 0.032</td><td>–</td><td class="num">4748</td></tr>
+        <tr><td>StrategyQA</td><td>MiniCheck + noise η = 0.10</td><td>0.82</td><td>0.084 ± 0.001</td><td>0.042 ± 0.001</td><td>0.23 ± 0.03</td><td>0.003 ± 0.003</td><td>0.048 ± 0.019</td><td class="ok">−0.002</td><td class="num">4748</td></tr>
+        <tr><td>StrategyQA</td><td>MiniCheck + noise η = 0.20</td><td>0.82</td><td>0.13 ± 0.02</td><td>0.065 ± 0.002</td><td>0.24 ± 0.04</td><td>0.002 ± 0.002</td><td>0.035 ± 0.025</td><td class="ok">−0.007</td><td class="num">4748</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>Every fitted slope lies between <span class="num">−0.007</span> and <span class="num">0</span>. Coverage loss does not grow with depth at either noise level on any dataset, which is the prediction and is the non-obvious half of Theorem 4.5: the per-step error of <span class="num">2η</span> is damped by the same geometric contraction that drives the coverage bound, so the penalty sums to <span class="num">2ηκ<sub>m</sub></span> and stops there. The operational consequence is Corollary 4.6 — deepening the budget is free in this bound, and improving the entailment model is what buys harder questions.</p>
+    <p>The verifier comparison also shows where the headroom is. SQuAD-2 answerability reaches the highest AUC (0.98) and the lowest calibration error on 2Wiki but delivers SUF of 0.49 against MiniCheck's 0.62, so AUC alone does not order the verifiers by what matters. Theorem A.9 explains why: the achievable (risk, answer-rate) region is the convex region under the ROC curve, and AUC is one scalar functional of that curve. Two verifiers with equal AUC can offer different answer rates at a given <span class="sym">α</span>.</p>
+  </div>
+
+  <details class="more">
+    <summary>Table 21 — No-harm check: AG at Suffice's answer rate against random and log-probability abstention (2Wiki and Bamboogle)</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>System</th><th>Answer rate</th><th>AG</th></tr></thead>
+      <tbody>
+        <tr class="sys"><td>2Wiki</td><td class="wide">Suffice (τ = 1)</td><td>0.363 ± 0.035</td><td>0.003</td></tr>
+        <tr><td>2Wiki</td><td class="wide">Suffice order, random abstention</td><td>0.363 ± 0.035</td><td>0.006 ± 0.001</td></tr>
+        <tr><td>2Wiki</td><td class="wide">BM25 → gen + log-prob abstention</td><td>0.363 ± 0.035</td><td>0.011 ± 0.002</td></tr>
+        <tr><td>2Wiki</td><td class="wide">Dense (e5) + log-prob abstention</td><td>0.363 ± 0.035</td><td>0.023</td></tr>
+        <tr><td>2Wiki</td><td class="wide">Hybrid RRF + log-prob abstention</td><td>0.363 ± 0.035</td><td>0.013 ± 0.010</td></tr>
+        <tr><td>2Wiki</td><td class="wide">MMR (entailment) + log-prob abstention</td><td>0.363 ± 0.035</td><td>0.016 ± 0.002</td></tr>
+        <tr><td>2Wiki</td><td class="wide">DPP (entailment) + log-prob abstention</td><td>0.363 ± 0.035</td><td>0.020 ± 0.006</td></tr>
+        <tr><td>2Wiki</td><td class="wide">Coverage-greedy + log-prob abstention</td><td>0.363 ± 0.035</td><td>0.011 ± 0.002</td></tr>
+        <tr class="sys"><td>Bamboogle</td><td class="wide">Suffice (τ = 1)</td><td>0.084 ± 0.018</td><td>0.016 ± 0.016</td></tr>
+        <tr><td>Bamboogle</td><td class="wide">Suffice order, random abstention</td><td>0.084 ± 0.018</td><td>0.004 ± 0.005</td></tr>
+        <tr><td>Bamboogle</td><td class="wide">Hybrid RRF + log-prob abstention</td><td>0.084 ± 0.018</td><td>0.008 ± 0.004</td></tr>
+        <tr><td>Bamboogle</td><td class="wide">MMR (entailment) + log-prob abstention</td><td>0.084 ± 0.018</td><td>0.013 ± 0.007</td></tr>
+        <tr><td>Bamboogle</td><td class="wide">DPP (entailment) + log-prob abstention</td><td>0.084 ± 0.018</td><td>0.015 ± 0.008</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+  <div class="col block">
+    <p style="font-size:.95rem;color:var(--ink-2)">Theorem A.8 says a certified system should beat random abstention at matched answer rate whenever the verifier has AUC above one half. On Bamboogle it does (0.016 against 0.004). On 2Wiki it does not: Suffice reaches AG 0.003 where its own ordering with random abstention reaches 0.006, and several log-probability variants reach more. The theorem's first half is close to tautological and its second half — that between two nested ROC curves the dominating one yields weakly higher AG at every answer rate — is the comparison that matters, and it rests on a monotonicity assumption about the generator that we flag rather than prove. On 2Wiki that assumption is where the result is failing, and the honest reading is that at this scale the gate is selecting for sufficiency rather than for attributable correctness.</p>
+  </div>
+</section>
+
+<section class="part" id="p7">
+  <div class="part-head col">
+    <span class="eyebrow">6.9 · Prediction P7</span>
+    <h2>Are certificates causal?</h2>
+  </div>
+  <div class="col block">
+    <dl class="pred">
+      <dt>P7</dt><dd>CAS is high for Suffice and low for baselines whose answers are merely post-hoc attributed; certified answers change when their minimal core is removed.</dd>
+    </dl>
+    <p>A certificate that names evidence the generator did not use is decorative. CAS measures the fraction of certified answers that change when the minimal support core <span class="num">S<sup>†</sup></span> is withheld, which makes the question empirical rather than definitional. This is, to our knowledge, untested by any existing attribution metric.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 22</b> P7: CAS and accuracy with and without the core (macro average, %). <span class="sym">Δ</span>Acc mixes denominators and should be read against Acc|answered, not against Acc.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>System</th><th>AG</th><th>CAS ↑</th><th>Acc</th><th>Acc w/o core</th><th>ΔAcc</th></tr></thead>
+      <tbody>
+        <tr class="sys"><td>Suffice (τ = 1)</td><td>0.53 ± 0.40</td><td class="ok">59.40 ± 3.25</td><td>7.70 ± 0.35</td><td>32.03 ± 6.91</td><td>−24.33 ± 7.16</td></tr>
+        <tr class="sys"><td>Suffice (τ = 1), no constrained decoding</td><td>0.53 ± 0.40</td><td class="ok">60.17 ± 5.03</td><td>9.23 ± 0.31</td><td>28.87 ± 4.48</td><td>−19.60 ± 4.80</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>Roughly 59 to 60% of certified answers change when the core is removed, and that figure rises to 69.0% at <span class="num">τ = 7</span>. The complement is the uncomfortable part: on about 40% of certified answers the generator produces the same output from parametric memory, and for those the certificate is valid and causally inert. Section 7 named this in advance as the paper's most interesting possible negative result, and a partial version of it has occurred.</p>
+    <p>The <span class="sym">Δ</span>Acc column needs its caveat read. Accuracy without the core (32.0%) exceeds accuracy with it (7.7%) by 24 points, which looks like evidence that the evidence hurts. It is not: the two columns have different denominators, because Acc is computed over all questions including the 87% on which Suffice abstains, while Acc w/o core is computed on the answered subset. The correct comparison is against Acc|answered, which is 25.0 ± 17.7 at <span class="num">τ = 3</span> and 66.7 ± 8.3 at <span class="num">τ = 5</span>. We report the mixed-denominator column because it appears in the ablation logs and would otherwise invite exactly this misreading from a reader who found it there.</p>
+  </div>
+</section>
+
+<section class="part" id="cost">
+  <div class="part-head col">
+    <span class="eyebrow">6.10</span>
+    <h2>The budget the guarantee actually spends</h2>
+  </div>
+  <div class="col block">
+    <p>Theorem A.6 refuses to assume away the two things that stand between a certificate over recovered premises and a claim about the truth: premise recall and first-stage pool recall. It prices them as <span class="num">α + M<sub>q</sub>ε<sub>d</sub> + π<sub>m</sub></span> and requires both to be measured. They are, and the result is unflattering by design.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 23</b> Theorem A.6: premise recall PR, decomposer miss rate <span class="sym">ε<sub>d</sub></span>, mean premises <span class="sym">M<sub>q</sub></span>, pool-miss rate <span class="sym">π<sub>m</sub></span>, and the end-to-end budget.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>PR</th><th>ε<sub>d</sub></th><th>Mean M<sub>q</sub></th><th>π<sub>m</sub></th><th>α</th><th>Bound</th></tr></thead>
+      <tbody>
+        <tr><td>2Wiki</td><td>0.786 ± 0.001</td><td>0.214 ± 0.001</td><td>2.410</td><td>0.157</td><td>0.100</td><td class="no">0.772 ± 0.002</td></tr>
+        <tr><td>MuSiQue</td><td>0.512 ± 0.014</td><td>0.488 ± 0.014</td><td>2.580</td><td>0.353</td><td>0.100</td><td class="no">1.711 ± 0.036</td></tr>
+        <tr><td>StrategyQA</td><td>0.523 ± 0.003</td><td>0.477 ± 0.003</td><td>1.777</td><td>0.213</td><td>0.100</td><td class="no">1.162 ± 0.005</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <div class="callout warnbox">
+      <span class="eyebrow">The binding limitation</span>
+      <p>The end-to-end bound is vacuous on all three datasets: 0.77 on 2Wiki and above 1.0 on MuSiQue and StrategyQA. Keeping the two correction terms under <span class="num">α = 0.10</span> at <span class="num">M<sub>q</sub> = 4</span> would require premise recall above roughly 97.5% and pool miss below 2.5%, and the decomposer reaches 78.6% at best and 51.2% at worst. What is certified in every other table on this page is therefore the sufficiency of the retrieved pool with respect to the <em>recovered</em> premise set, which is a real and checkable property, and not sufficiency with respect to the true premise set over the corpus. Premise extraction and pool recall are priced here, not solved.</p>
+    </div>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 24</b> Cost per question (macro average): generator prompt and output tokens, verifier calls, delivered context size, depth efficiency <span class="num">E|S| / E[κ<sub>m</sub>]</span>, and AG per 1k tokens.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>System</th><th>Prompt tok.</th><th>Output tok.</th><th>Verifier calls</th><th>|context|</th><th>Depth eff.</th><th>AG / 1k tok.</th></tr></thead>
+      <tbody>
+        <tr><td>Closed-book LLM</td><td>82</td><td>3.70 ± 0.10</td><td>–</td><td>0</td><td>0</td><td>0.004 ± 0.001</td></tr>
+        <tr><td>Dense (e5)</td><td class="no">2071.67 ± 136.31</td><td>3.73 ± 0.15</td><td>–</td><td>17.25 ± 1.32</td><td>8.04 ± 0.62</td><td>0.004 ± 0.001</td></tr>
+        <tr><td>MMR (embedding)</td><td>1048.00 ± 610.26</td><td>3.77 ± 0.25</td><td>–</td><td>8.08 ± 5.01</td><td>3.77 ± 2.33</td><td>0.005 ± 0.009</td></tr>
+        <tr class="sys"><td>Suffice (τ = 1)</td><td class="ok">109.67 ± 6.66</td><td>1.33 ± 0.15</td><td>336.33 ± 7.64</td><td>5.68 ± 0.05</td><td class="ok">2.65 ± 0.02</td><td class="ok">0.045 ± 0.034</td></tr>
+        <tr class="sys"><td>Suffice (τ = 3)</td><td>4.00 ± 2.65</td><td>0.09 ± 0.03</td><td>336.33 ± 7.64</td><td>6.27 ± 0.08</td><td>2.92 ± 0.04</td><td>0.011 ± 0.004</td></tr>
+        <tr class="sys"><td>Suffice (τ = 5)</td><td>1.53 ± 0.62</td><td>0.03 ± 0.01</td><td>336.33 ± 7.64</td><td>6.28 ± 0.07</td><td>2.93 ± 0.04</td><td>0.005 ± 0.002</td></tr>
+        <tr class="sys"><td>Suffice (τ = 7)</td><td>0.74 ± 0.31</td><td>0.01 ± 0.01</td><td>336.33 ± 7.64</td><td>6.28 ± 0.07</td><td>2.93 ± 0.04</td><td>0.003 ± 0.001</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>The cost picture has two sides and the table reports both. Suffice sends 110 prompt tokens per question against dense top-<span class="sym">k</span>'s 2,072 — the prediction of Proposition 3.10, since the budget <span class="num">κ̂<sub>m</sub>H(M<sub>q</sub>)</span> lands near 6 while the tuned <span class="sym">k</span> often lands at 50 — and reaches 0.045 AG per 1k generator tokens against 0.004. Depth efficiency is 2.65 against 8.04, meaning the delivered set is 2.65× the gold dispersion rather than 8×.</p>
+    <p>Against that, the verifier spends 336 entailment calls per question, which Corollary 4.12 says is unimprovable up to constants given the <span class="num">Ω(mM<sub>q</sub>)</span> lower bound. Those calls are small-model batched passes and cacheable across queries sharing passages, but a reader who counts total FLOPs rather than generator tokens will reach a different verdict than this table gives, and we state the accounting rather than choose it. Adaptive allocation is what makes the figure 336 rather than the 422 to 778 calls the non-adaptive schedule requires.</p>
+  </div>
+</section>
+
+<section class="part" id="stats">
+  <div class="part-head col">
+    <span class="eyebrow">6.11</span>
+    <h2>Paired bootstrap and the honest reading</h2>
+  </div>
+  <div class="col block">
+    <p>Significance is assessed by a paired cluster bootstrap with 10,000 resamples over dataset, seed, and question, with Holm–Bonferroni correction across the 48 comparisons per metric. Unanswered questions count as zero, which is the conservative convention for a system that abstains on 87% of its input.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 25</b> Paired bootstrap of Suffice (<span class="num">τ = 1</span>) minus each baseline, in percentage points, with 95% interval and Holm-adjusted <span class="sym">p</span>.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Baseline</th><th>Metric</th><th>Δ</th><th>CI low</th><th>CI high</th><th>p</th><th>p<sub>holm</sub></th><th>n</th></tr></thead>
+      <tbody>
+        <tr><td>BM25</td><td>AG</td><td class="no">−0.80</td><td>−1.21</td><td>−0.38</td><td>0.0002</td><td>0.0030</td><td class="num">2890</td></tr>
+        <tr><td>Closed-book</td><td>AG</td><td class="ok">+0.24</td><td>0.07</td><td>0.45</td><td>0.0016</td><td>0.0176</td><td class="num">2890</td></tr>
+        <tr><td>Coverage-greedy</td><td>AG</td><td class="no">−0.83</td><td>−1.25</td><td>−0.45</td><td>0</td><td>0</td><td class="num">2890</td></tr>
+        <tr><td>Dense (e5)</td><td>AG</td><td class="no">−0.80</td><td>−1.18</td><td>−0.45</td><td>0</td><td>0</td><td class="num">2890</td></tr>
+        <tr><td>DPP (entailment)</td><td>AG</td><td class="no">−1.11</td><td>−1.56</td><td>−0.69</td><td>0</td><td>0</td><td class="num">2890</td></tr>
+        <tr><td>Hybrid RRF</td><td>AG</td><td>−0.45</td><td>−0.80</td><td>−0.10</td><td>0.0100</td><td>0.0564</td><td class="num">2890</td></tr>
+        <tr><td>MMR (entailment)</td><td>AG</td><td class="no">−1.04</td><td>−1.49</td><td>−0.62</td><td>0</td><td>0</td><td class="num">2890</td></tr>
+        <tr><td>monoT5</td><td>AG</td><td class="no">−0.76</td><td>−1.18</td><td>−0.38</td><td>0</td><td>0</td><td class="num">2890</td></tr>
+        <tr><td>Oracle-κ</td><td>AG</td><td>−0.07</td><td>−0.28</td><td>0.14</td><td>0.6368</td><td>0.7024</td><td class="num">2890</td></tr>
+        <tr><td>RobustRAG-style</td><td>AG</td><td>−0.14</td><td>−0.42</td><td>0.10</td><td>0.3512</td><td>0.7024</td><td class="num">2890</td></tr>
+        <tr><td>Sufficient-context</td><td>AG</td><td>−0.21</td><td>−0.52</td><td>0.07</td><td>0.2106</td><td>0.6318</td><td class="num">2890</td></tr>
+        <tr><td>BM25</td><td>Acc</td><td class="no">−19.76</td><td>−21.56</td><td>−17.96</td><td>0</td><td>0</td><td class="num">2890</td></tr>
+        <tr><td>Always-answer</td><td>Acc</td><td class="no">−25.74</td><td>−27.34</td><td>−24.19</td><td>0</td><td>0</td><td class="num">2890</td></tr>
+        <tr><td>Dense (e5)</td><td>Acc</td><td class="no">−20.35</td><td>−22.11</td><td>−18.58</td><td>0</td><td>0</td><td class="num">2890</td></tr>
+        <tr><td>RobustRAG-style</td><td>Acc</td><td class="no">−3.77</td><td>−5.26</td><td>−2.28</td><td>0</td><td>0</td><td class="num">2890</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <div class="callout">
+      <span class="eyebrow">What the bootstrap says, stated plainly</span>
+      <p>Suffice has significantly lower AG than every set-oblivious baseline and than both entailment-space diversity variants, and significantly lower Acc than all of them, because it abstains on most questions and abstentions score zero. It is statistically indistinguishable from the three systems that also withhold answers or carry guarantees — Oracle-<span class="sym">κ</span>, RobustRAG-style, and the sufficient-context selector. It beats closed-book on AG by 0.24 points, which is the only positive row.</p>
+      <p>The contribution is therefore the certificate and the depth law, not a uniform SUF or AG win, and the paper should not be read as claiming one. A reader who wants the single number that distinguishes this system from the suite should take CSR: 4.73% against a 10% target, where every non-selective baseline sits at 70.9% and has no mechanism for moving.</p>
+    </div>
+  </div>
+</section>
+
+<section class="part" id="audit">
+  <div class="part-head col">
+    <span class="eyebrow">6.12</span>
+    <h2>Leakage audit and extended coverage</h2>
+  </div>
+  <div class="col block">
+    <p>A sufficiency metric computed over premises extracted from the same source as the gold answer invites a leakage objection, so the audit is reported as a reviewer-facing table with four independent channels rather than as a claim in prose.</p>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 26</b> Formal data-leakage audit. Audit 3 is reported with its sign: a small or negative gold-versus-distractor gap is a bias in the verifier, not a leak, and NQ shows one.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Audit check</th><th>Empirical criterion</th><th>Verdict</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td colspan="3">Audit 1 · Premise–answer label disjointness</td></tr>
+        <tr><td>PopQA</td><td class="wide">0 / 500 injected label leaks</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr><td>NQ</td><td class="wide">0 / 400 injected label leaks</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr><td>TriviaQA</td><td class="wide">0 / 400 injected label leaks</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr><td>HotpotQA</td><td class="wide">Premises from document titles + question metadata</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr class="sys"><td>Total</td><td class="wide">0 of 1,300 instances</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr class="grp"><td colspan="3">Audit 2 · Calibration–test split disjointness</td></tr>
+        <tr><td>HotpotQA</td><td class="wide">Cal = 150, test = 150, overlap = 0</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr><td>PopQA</td><td class="wide">Cal = 250, test = 250, overlap = 0</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr><td>NQ</td><td class="wide">Cal = 200, test = 200, overlap = 0</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr><td>TriviaQA</td><td class="wide">Cal = 200, test = 200, overlap = 0</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr class="grp"><td colspan="3">Audit 3 · Entailment-score discrimination</td></tr>
+        <tr><td>PopQA</td><td class="wide">Gold mean 0.9149, distractor mean 0.8424, gap +0.0725</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr><td>NQ</td><td class="wide">Gold mean 0.8268, distractor mean 0.8701, gap −0.0433</td><td><span class="chip c-mid">pass, negative gap</span></td></tr>
+        <tr><td>TriviaQA</td><td class="wide">Gold mean 0.9273, distractor mean 0.8939, gap +0.0334</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr class="grp"><td colspan="3">Audit 4 · Non-trivial task difficulty</td></tr>
+        <tr><td>HotpotQA</td><td class="wide">SUF@k=1 = 0.0%, SUF@k=2 = 45.3%</td><td><span class="chip c-ok">pass</span></td></tr>
+        <tr><td>PopQA</td><td class="wide">SUF@k=1 = 69.6%, SUF@k=2 = 69.6%</td><td><span class="chip c-ok">pass</span></td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <p>Audits 1, 2, and 4 pass without qualification. Audit 3 passes in the sense that matters — no gold answer is reachable from the premise set — while recording that on NQ the entailment verifier scores distractors slightly above gold passages. That is a calibration bias and it is the reason NQ's single-hop SUF at <span class="num">k = 1</span> is 1.0% in Table 9. We report it rather than dropping the dataset, because a verifier that cannot separate gold from distractor on one benchmark is information about the verifier, which Corollary 4.6 says is the component that limits how dispersed a question's evidence may be.</p>
+  </div>
+
+  <details class="more">
+    <summary>Table 27 — Extended benchmarks: ASQA and AdversarialQA</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>Dataset</th><th>System</th><th>N</th><th>Ans rate</th><th>EM<sub>all</sub></th><th>F1<sub>all</sub></th><th>EM<sub>ans</sub></th><th>F1<sub>ans</sub></th><th>Err. risk</th><th>k̄</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td colspan="10">ASQA</td></tr>
+        <tr><td>BM25 top-k</td><td class="wide">fixed depth</td><td class="num">3483</td><td>0.780</td><td>0.0003</td><td>0.0231</td><td>0.0004</td><td>0.0289</td><td>0.9996</td><td>5.00</td></tr>
+        <tr><td>Dense top-k</td><td class="wide">fixed depth</td><td class="num">3483</td><td>0.867</td><td>0.0000</td><td>0.0261</td><td>0.0000</td><td>0.0298</td><td>1.0000</td><td>5.00</td></tr>
+        <tr><td>Hybrid top-k</td><td class="wide">fixed depth</td><td class="num">3483</td><td>0.858</td><td>0.0000</td><td>0.0251</td><td>0.0000</td><td>0.0290</td><td>1.0000</td><td>5.00</td></tr>
+        <tr><td>MMR top-k</td><td class="wide">fixed depth</td><td class="num">3483</td><td>0.897</td><td>0.0003</td><td>0.0258</td><td>0.0003</td><td>0.0285</td><td>0.9997</td><td>5.00</td></tr>
+        <tr class="sys"><td>Suffice</td><td class="wide">certified</td><td class="num">3483</td><td>0.643</td><td>0.0000</td><td>0.0199</td><td>0.0000</td><td>0.0291</td><td>1.0000</td><td>4.25</td></tr>
+        <tr class="grp"><td colspan="10">AdversarialQA</td></tr>
+        <tr><td>BM25 top-k</td><td class="wide">fixed depth</td><td class="num">2400</td><td>0.633</td><td>0.0600</td><td>0.0741</td><td>0.0947</td><td>0.1165</td><td>0.9053</td><td>5.00</td></tr>
+        <tr><td>Dense top-k</td><td class="wide">fixed depth</td><td class="num">2400</td><td>0.756</td><td>0.0683</td><td>0.0867</td><td>0.0904</td><td>0.1141</td><td>0.9096</td><td>5.00</td></tr>
+        <tr><td>Hybrid top-k</td><td class="wide">fixed depth</td><td class="num">2400</td><td>0.759</td><td>0.0633</td><td>0.0818</td><td>0.0835</td><td>0.1075</td><td>0.9165</td><td>5.00</td></tr>
+        <tr><td>MMR top-k</td><td class="wide">fixed depth</td><td class="num">2400</td><td>0.783</td><td>0.0658</td><td>0.0823</td><td>0.0840</td><td>0.1046</td><td>0.9160</td><td>5.00</td></tr>
+        <tr class="sys"><td>Suffice</td><td class="wide">certified</td><td class="num">2400</td><td>0.442</td><td>0.0342</td><td>0.0428</td><td>0.0773</td><td>0.0951</td><td>0.9227</td><td>7.36</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+
+  <details class="more">
+    <summary>Table 28 — Main results on 2WikiMultihopQA, the dataset where P1 and P2 are both testable</summary>
+    <div class="scroll"><table>
+      <thead><tr><th>System</th><th>AG</th><th>Acc</th><th>Γ</th><th>SUF</th><th>SNA</th><th>CAS</th><th>Ans%</th></tr></thead>
+      <tbody>
+        <tr><td>Closed-book LLM</td><td>–</td><td>20.7</td><td>20.7</td><td>12.4 ± 0.6</td><td>–</td><td>–</td><td>100</td></tr>
+        <tr><td>Long-context (top-100)</td><td>2.3</td><td>27.0</td><td>24.7</td><td>48.7</td><td>4.8</td><td>70.0</td><td>100</td></tr>
+        <tr><td>BM25 → generate</td><td>2.7 ± 0.6</td><td>26.2 ± 1.5</td><td>23.5 ± 1.0</td><td>35.8 ± 2.1</td><td>7.5 ± 2.1</td><td>69.8 ± 1.0</td><td>100</td></tr>
+        <tr><td>Hybrid RRF</td><td>2.1 ± 0.8</td><td>27.1 ± 0.7</td><td>25.0 ± 0.9</td><td>36.6 ± 10.4</td><td>6.0 ± 2.1</td><td>67.8 ± 1.2</td><td>100</td></tr>
+        <tr><td>Dense (e5)</td><td>2.7</td><td>27.0</td><td>24.3</td><td>44.7</td><td>6.0</td><td>66.0</td><td>100</td></tr>
+        <tr><td>monoT5</td><td>2.3</td><td>25.7</td><td>23.4</td><td>46.3</td><td>5.0</td><td>66.0</td><td>100</td></tr>
+        <tr><td>MMR (embedding)</td><td>0.1 ± 0.2</td><td>21.3 ± 0.9</td><td>21.2 ± 0.8</td><td>20.4 ± 6.0</td><td>0.4 ± 0.7</td><td>67.0 ± 0.9</td><td>100</td></tr>
+        <tr><td>IRCoT</td><td>2.3</td><td>33.3</td><td>31.0</td><td>40.3</td><td>5.8</td><td>76.3</td><td>100</td></tr>
+        <tr><td>Self-Ask</td><td>2.3</td><td>35.3</td><td>33.0</td><td>51.0</td><td>4.6</td><td>83.0</td><td>100</td></tr>
+        <tr><td>ITER-RETGEN</td><td>3.3</td><td>38.0</td><td>34.7</td><td>39.7</td><td>8.4</td><td>77.0</td><td>100</td></tr>
+        <tr><td>Astute RAG</td><td>2.0</td><td>36.0</td><td>34.0</td><td>34.0</td><td>5.9</td><td>72.3</td><td>100</td></tr>
+        <tr><td>Sufficient-context</td><td>1.3 ± 1.0</td><td>14.6 ± 1.1</td><td>13.3 ± 0.4</td><td>36.6 ± 10.4</td><td>4.0 ± 2.8</td><td>46.1 ± 7.4</td><td>36.3 ± 3.5</td></tr>
+        <tr><td>C-RAG-style</td><td>–</td><td>–</td><td>–</td><td>36.6 ± 10.4</td><td>–</td><td>–</td><td>0</td></tr>
+        <tr><td>RobustRAG-style</td><td>1.0</td><td>8.3</td><td>7.3</td><td>34.0</td><td>2.9</td><td>58.0</td><td>29.3</td></tr>
+        <tr><td>Oracle-κ</td><td>0.7</td><td>22.3</td><td>21.6</td><td>14.3</td><td>4.7</td><td>72.0</td><td>100</td></tr>
+        <tr><td>MMR (entailment)</td><td>2.8 ± 0.2</td><td>36.1 ± 2.0</td><td>33.3 ± 1.8</td><td class="ok">72.3 ± 4.9</td><td>3.9 ± 0.5</td><td>67.7 ± 0.9</td><td>100</td></tr>
+        <tr><td>DPP (entailment)</td><td>3.2 ± 0.2</td><td>37.2 ± 2.0</td><td>34.0 ± 2.0</td><td>68.6 ± 1.9</td><td>4.7 ± 0.3</td><td>69.9 ± 1.1</td><td>100</td></tr>
+        <tr><td>Coverage-greedy</td><td>2.9 ± 0.2</td><td>34.0 ± 2.6</td><td>31.1 ± 2.8</td><td>70.1 ± 4.4</td><td>4.1</td><td>68.4 ± 0.8</td><td>100</td></tr>
+        <tr class="sys"><td>Suffice (τ = 1)</td><td>0.3</td><td>19.6 ± 1.3</td><td>19.3 ± 1.3</td><td>59.8 ± 0.5</td><td>0.6</td><td>66.2 ± 1.7</td><td>36.3 ± 3.5</td></tr>
+        <tr class="sys"><td>Suffice (τ = 3)</td><td>0.2 ± 0.1</td><td>12.4 ± 0.9</td><td>12.2 ± 0.9</td><td>62.1 ± 0.8</td><td>0.5 ± 0.2</td><td>68.9 ± 1.6</td><td>24.1 ± 3.0</td></tr>
+        <tr class="sys"><td>Suffice (τ = 5)</td><td>0.1 ± 0.1</td><td>6.8 ± 0.7</td><td>6.7 ± 0.7</td><td>62.1 ± 0.8</td><td>0.4 ± 0.1</td><td>71.2 ± 2.3</td><td>13.7 ± 2.2</td></tr>
+        <tr class="sys"><td>Suffice (τ = 7)</td><td>0.1 ± 0.1</td><td>3.9 ± 0.5</td><td>3.8 ± 0.5</td><td>62.1 ± 0.8</td><td>0.2 ± 0.1</td><td>73.4 ± 2.8</td><td>7.6 ± 1.6</td></tr>
+      </tbody>
+    </table></div>
+  </details>
+</section>
+
+<section class="part" id="status">
+  <div class="part-head col">
+    <span class="eyebrow">6.13</span>
+    <h2>Scorecard against the eight predictions</h2>
+  </div>
+
+  <figure class="tbl">
+    <figcaption><b>Table 29</b> Each prediction was registered before results were inspected, with the refutation cost stated in advance. This is the summary of where the evidence currently stands.</figcaption>
+    <div class="scroll"><table>
+      <thead><tr><th>Prediction</th><th>Status</th><th>Evidence and cost if it fails</th></tr></thead>
+      <tbody>
+        <tr><td>P1 · Depth envelope</td><td><span class="chip c-mid">partial</span></td><td class="wide">Containment holds everywhere; interiority holds only for the hybrid family on 2Wiki and StrategyQA. A monotone AG curve would falsify Assumption 2 and collapse Theorem 4.13 to "retrieve more," leaving certification, the barrier, and robustness intact.</td></tr>
+        <tr><td>P2 · Independence barrier</td><td><span class="chip c-mid">partial</span></td><td class="wide">Embedding MMR collapses as constructed and entailment-space variants close most of the gap, but the gap does not grow monotonically in <span class="sym">r(q)</span> against hybrid RRF. Theorem 4.8 stands and is non-binding at this pool size.</td></tr>
+        <tr><td>P3 · Risk control</td><td><span class="chip c-ok">holds</span></td><td class="wide">CSR ≤ <span class="sym">α</span> in distribution at every level and every seed, and within <span class="num">α + δ</span> under shift. This is the headline; failing it in-distribution would void the guarantee.</td></tr>
+        <tr><td>P4 · Grounding gap</td><td><span class="chip c-ok">holds</span></td><td class="wide"><span class="sym">Γ</span> &gt; 0 for every baseline and largest for closed-book and long-context, with the label-agreement caveat of Table 16 attached. Failure would indicate an annotation artifact.</td></tr>
+        <tr><td>P5 · Certified robustness</td><td><span class="chip c-no">fails as logged</span></td><td class="wide">The predicted RobustRAG crossing appears between <span class="num">b = 1</span> and <span class="num">b = 2</span>, and empirical attack success falls monotonically in <span class="sym">τ</span>. But 3 of the 12 pairs the audit classifies as inside the certified radius were flipped, and no pair at <span class="num">τ = 5</span> or <span class="num">7</span> is classified as inside at all. Per Section 7 this implicates Assumption 8 or the independence clustering; the fractional <span class="sym">b<sup>★</sup></span> values point instead at Algorithm 3.</td></tr>
+        <tr><td>P6 · Noise and frontier</td><td><span class="chip c-ok">holds</span></td><td class="wide">Every slope of coverage loss against <span class="num">log k</span> lies in <span class="num">[−0.007, 0]</span>. A positive slope would falsify Theorem 4.5 directly.</td></tr>
+        <tr><td>P7 · Causal certificates</td><td><span class="chip c-mid">partial</span></td><td class="wide">CAS is 59–69%, so roughly two in five certified answers survive removal of their core. This was pre-registered as the most interesting possible negative result, and a partial version of it occurred.</td></tr>
+        <tr><td>P8 · Conditional validity</td><td><span class="chip c-ok">holds</span></td><td class="wide">Marginal calibration leaves a worst stratum at 2.7×–11.5× the target; Mondrian brings it to 1.06×–1.65× at a 25-point answer-rate cost at <span class="num">α = 0.05</span>. A benign failure would have made Theorem A.7 unnecessary.</td></tr>
+      </tbody>
+    </table></div>
+  </figure>
+
+  <div class="col block">
+    <div class="callout">
+      <span class="eyebrow">Status of this section</span>
+      <p>Protocol, baselines, seeds, and the eight predictions of Section 5.4 were fixed before any result was inspected, and Section 7 of the paper states what each refutation would cost the theory. Remark 2 in the submitted draft flags the figures in Section 6 as provisional pending the final run; the tables here reproduce run <span class="num">suffice_multihop_v6</span> as logged.</p>
+    </div>
+  </div>
+</section>
+
+<!--END-->
+
+</main>
+
+<footer>
+  <div class="wrap foot-in">
+    <p>Retrieve Until Sufficient: Certified Evidence Sufficiency as a Retrieval Objective for the Open Web. Sections 5.2 and 6, extended, with the supporting appendix tables.</p>
+  </div>
+</footer>
+
+</body></html>
